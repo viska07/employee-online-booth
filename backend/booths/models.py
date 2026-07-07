@@ -3,28 +3,9 @@ from django.db import models
 
 class Booth(models.Model):
 
-    CONTENT_TYPES = (
-        ('BANNER', 'Banner'),
-        ('VIDEO', 'Video'),
-        ('PRESENTATION', 'Presentation'),
-        ('DOCUMENT', 'Document'),
-        ('MATERIAL', 'Material'),
-    )
-
     title = models.CharField(max_length=255)
 
-    type = models.CharField(
-        max_length=20,
-        choices=CONTENT_TYPES
-    )
-
     description = models.TextField()
-
-    file = models.FileField(
-        upload_to='booths/',
-        blank=True,
-        null=True
-    )
 
     thumbnail = models.ImageField(
         upload_to='booths/thumbnails/',
@@ -67,7 +48,7 @@ class BoothActivity(models.Model):
 
     ACTION_CHOICES = (
         ('VIEW', 'View'),
-        ('DOWNLOAD', 'Download'),
+        ('OPEN', 'Open Resource'),
         ('COMPLETE', 'Complete'),
     )
 
@@ -78,6 +59,14 @@ class BoothActivity(models.Model):
     booth = models.ForeignKey(
         Booth,
         on_delete=models.CASCADE
+    )
+
+    content = models.ForeignKey(
+        "BoothContent",
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+        related_name="activities"
     )
 
     action = models.CharField(
@@ -91,3 +80,43 @@ class BoothActivity(models.Model):
 
     def __str__(self):
         return f"{self.user_name} - {self.action}"
+    
+class BoothContent(models.Model):
+
+    CONTENT_TYPES = (
+        ('VIDEO', 'Video'),
+        ('DOCUMENT', 'Document'),
+        ('PRESENTATION', 'Presentation'),
+        ('ARTICLE', 'Article'),
+    )
+
+    booth = models.ForeignKey(
+        Booth,
+        on_delete=models.CASCADE,
+        related_name='contents'
+    )
+
+    title = models.CharField(
+        max_length=255
+    )
+
+    description = models.TextField(
+        blank=True,
+        null=True
+    )
+
+    type = models.CharField(
+        max_length=20,
+        choices=CONTENT_TYPES
+    )
+
+    file = models.FileField(
+        upload_to='contents/'
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    def __str__(self):
+        return self.title

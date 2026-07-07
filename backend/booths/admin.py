@@ -1,12 +1,16 @@
 from django.contrib import admin
-from .models import Booth, BoothActivity
+from .models import (
+    Booth,
+    BoothActivity,
+    BoothContent
+)
 
 
 @admin.register(Booth)
 class BoothAdmin(admin.ModelAdmin):
+
     list_display = (
         'title',
-        'type',
         'display_order',
         'is_featured',
         'author_name',
@@ -16,7 +20,6 @@ class BoothAdmin(admin.ModelAdmin):
     )
 
     list_filter = (
-        'type',
         'is_active',
         'is_featured',
     )
@@ -29,6 +32,7 @@ class BoothAdmin(admin.ModelAdmin):
 
 @admin.register(BoothActivity)
 class BoothActivityAdmin(admin.ModelAdmin):
+
     list_display = (
         'user_name',
         'action',
@@ -43,4 +47,22 @@ class BoothActivityAdmin(admin.ModelAdmin):
     search_fields = (
         'user_name',
         'user_email',
+    )
+
+@admin.register(BoothContent)
+class BoothContentAdmin(admin.ModelAdmin):
+
+    list_display = (
+        'title',
+        'booth',
+        'type',
+        'created_at',
+    )
+
+    list_filter = (
+        'type',
+    )
+
+    search_fields = (
+        'title',
     )

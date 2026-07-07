@@ -1,13 +1,18 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-
 from django.db.models import Count
-
 from booths.models import Booth, BoothActivity
 from announcements.models import Announcement
+from rest_framework.permissions import IsAuthenticated
+from core.permissions import IsAdminEmployee
 
 
 class DashboardAPIView(APIView):
+
+    permission_classes = [
+        IsAuthenticated,
+        IsAdminEmployee,
+    ]
 
     def get(self, request):
 
@@ -31,7 +36,6 @@ class DashboardAPIView(APIView):
                 {
                     'id': booth.id,
                     'title': booth.title,
-                    'type': booth.type,
                 }
                 for booth in latest_booths
             ],
@@ -49,6 +53,11 @@ class DashboardAPIView(APIView):
     
 class DashboardStatisticsAPIView(APIView):
 
+    permission_classes = [
+        IsAuthenticated,
+        IsAdminEmployee,
+    ]
+
     def get(self, request):
 
         total_booths = Booth.objects.count()
@@ -59,8 +68,8 @@ class DashboardStatisticsAPIView(APIView):
             action='VIEW'
         ).count()
 
-        total_downloads = BoothActivity.objects.filter(
-            action='DOWNLOAD'
+        total_opens = BoothActivity.objects.filter(
+            action='OPEN'
         ).count()
 
         total_completes = BoothActivity.objects.filter(
@@ -71,11 +80,16 @@ class DashboardStatisticsAPIView(APIView):
             'total_booths': total_booths,
             'total_announcements': total_announcements,
             'total_views': total_views,
-            'total_downloads': total_downloads,
+            'total_opens': total_opens,
             'total_completes': total_completes,
         })
     
 class DashboardAnalyticsAPIView(APIView):
+
+    permission_classes = [
+        IsAuthenticated,
+        IsAdminEmployee,
+    ]
 
     def get(self, request):
 
@@ -83,8 +97,8 @@ class DashboardAnalyticsAPIView(APIView):
             action='VIEW'
         ).count()
 
-        total_downloads = BoothActivity.objects.filter(
-            action='DOWNLOAD'
+        total_opens = BoothActivity.objects.filter(
+            action='OPEN'
         ).count()
 
         total_completes = BoothActivity.objects.filter(
@@ -102,7 +116,7 @@ class DashboardAnalyticsAPIView(APIView):
 
         return Response({
             'total_views': total_views,
-            'total_downloads': total_downloads,
+            'total_opens': total_opens,
             'total_completes': total_completes,
             'most_viewed_booth': (
                 most_viewed['booth__title']

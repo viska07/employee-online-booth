@@ -1,0 +1,485 @@
+/* ======================================================
+   ANNOUNCEMENT DESIGN SYSTEM
+====================================================== */
+:root{
+
+    --primary:#1694D7;
+    --primary-dark:#0E7EB8;
+    --bg:#F6F8FB;
+    --white:#FFFFFF;
+    --text:#1E293B;
+    --text-light:#64748B;
+    --border:#E2E8F0;
+    --shadow:0 10px 30px rgba(15,23,42,.08);
+    --radius:20px;
+}
+/* ======================================================
+   PAGE
+====================================================== */
+.announcements-page{
+    max-width:1400px;
+    margin:40px auto 80px;
+    padding:0 30px;
+}
+/* ======================================================
+   HERO
+====================================================== */
+.announcement-header{
+    position:relative;
+    overflow:hidden;
+    background:
+        linear-gradient(
+            135deg,
+            #005B96,
+            #1694D7
+        );
+    border-radius:28px;
+    padding:55px 60px;
+    color:white;
+    margin-bottom:35px;
+    box-shadow:0 18px 45px rgba(15,23,42,.15);
+}
+
+.announcement-header::before{
+    content:"";
+    position:absolute;
+    width:320px;
+    height:320px;
+    border-radius:50%;
+    background:rgba(255,255,255,.08);
+    top:-120px;
+    right:-80px;
+}
+
+.announcement-header::after{
+    content:"";
+    position:absolute;
+    width:250px;
+    height:250px;
+    border-radius:50%;
+    background:rgba(255,255,255,.05);
+    bottom:-110px;
+    left:-70px;
+}
+
+.announcement-header h1{
+    position:relative;
+    z-index:2;
+    font-size:50px;
+    margin-bottom:18px;
+}
+
+.announcement-header p{
+    position:relative;
+    z-index:2;
+    max-width:720px;
+    font-size:18px;
+    line-height:1.8;
+    opacity:.95;
+}
+/* ======================================================
+   SEARCH
+====================================================== */
+.announcement-search{
+    display:flex;
+    align-items:center;
+    gap:15px;
+    background:white;
+    padding:18px 24px;
+    border-radius:18px;
+    box-shadow:var(--shadow);
+    margin-bottom:20px;
+    transition:.25s;
+}
+
+.search-icon{
+    font-size:20px;
+    color:var(--primary);
+}
+
+.announcement-search input{
+    width:100%;
+    border:none;
+    outline:none;
+    font-size:16px;
+    background:transparent;
+}
+/* ======================================================
+   COUNTER
+====================================================== */
+.announcement-counter{
+    margin-bottom:30px;
+    color:var(--text-light);
+    font-size:15px;
+}
+
+.announcement-counter strong{
+    color:var(--primary);
+    font-size:20px;
+    margin:0 5px;
+}
+/* ======================================================
+   ANNOUNCEMENT LIST
+====================================================== */
+.announcement-list{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:24px;
+}
+/* ======================================================
+   ANNOUNCEMENT CARD
+====================================================== */
+.announcement-item{
+    background:var(--white);
+    border:1px solid var(--border);
+    border-radius:22px;
+    padding:28px;
+    min-height:330px;
+    display:flex;
+    flex-direction:column;
+    transition:.25s;
+    box-shadow:var(--shadow);
+}
+
+.announcement-item:hover{
+    transform:translateY(-6px);
+    border-color:var(--primary);
+    box-shadow:0 18px 40px rgba(15,23,42,.12);
+}
+/* ======================================================
+   CARD HEADER
+====================================================== */
+.announcement-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:22px;
+    gap:12px;
+    flex-wrap:wrap;
+}
+
+.important-badge{
+    background:#FFF3CD;
+    color:#B45309;
+    padding:8px 14px;
+    border-radius:999px;
+    font-size:13px;
+    font-weight:600;
+}
+
+.category-badge{
+    background:#EEF6FC;
+    color:var(--primary);
+    padding:8px 14px;
+    border-radius:999px;
+    font-size:13px;
+    font-weight:600;
+    letter-spacing:.5px;
+    text-transform:capitalize;
+}
+
+.announcement-item h2{
+    font-size:24px;
+    color:var(--text);
+    margin-bottom:16px;
+    line-height:1.4;
+}
+
+.announcement-item p{
+    color:var(--text-light);
+    line-height:1.8;
+    margin-bottom:25px;
+    flex:1;
+    display:-webkit-box;
+    -webkit-line-clamp:3;
+    -webkit-box-orient:vertical;
+    overflow:hidden;
+}
+/* ======================================================
+   FOOTER
+====================================================== */
+.announcement-footer{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding-top:18px;
+    border-top:1px solid var(--border);
+}
+
+.announcement-date{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    color:var(--text-light);
+    font-size:14px;
+}
+
+.announcement-footer button{
+    border:none;
+    background:var(--primary);
+    color:white;
+    padding:12px 18px;
+    border-radius:12px;
+    cursor:pointer;
+    font-weight:600;
+    transition:.25s;
+}
+
+.announcement-footer button:hover{
+    background:var(--primary-dark);
+    transform:translateY(-2px);
+}
+/* ======================================================
+   EMPTY
+====================================================== */
+.empty-announcement{
+    grid-column:1/-1;
+    background:white;
+    padding:80px 30px;
+    border-radius:22px;
+    text-align:center;
+    box-shadow:var(--shadow);
+}
+
+.empty-icon{
+    font-size:60px;
+    margin-bottom:20px;
+}
+
+.empty-announcement h3{
+    color:var(--text);
+    margin-bottom:10px;
+}
+
+.empty-announcement p{
+    color:var(--text-light);
+}
+
+.announcement-search:focus-within{
+    border:1px solid var(--primary);
+    box-shadow:0 0 0 4px rgba(22,148,215,.12);
+}
+
+@media (max-width:1024px){
+    .announcement-list{
+        grid-template-columns:repeat(2,1fr);
+    }
+}
+
+@media (max-width:768px){
+    .announcements-page{
+        padding:0 18px;
+    }
+
+    .announcement-header{
+        padding:40px 28px;
+    }
+
+    .announcement-header h1{
+        font-size:34px;
+    }
+
+    .announcement-header p{
+        font-size:16px;
+    }
+
+    .announcement-list{
+        grid-template-columns:1fr;
+    }
+
+    .announcement-footer{
+        flex-direction:column;
+        align-items:flex-start;
+        gap:18px;
+    }
+
+    .announcement-footer button{
+        width:100%;
+        justify-content:center;
+    }
+}
+/* ======================================================
+   ANNOUNCEMENT DETAIL
+====================================================== */
+.announcement-detail-page{
+    max-width:1200px;
+    margin:40px auto 80px;
+    padding:0 30px;
+}
+/* ======================================================
+   BACK BUTTON
+====================================================== */
+.back-button{
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+    margin:30px 0;
+    border:none;
+    background:#EEF6FC;
+    color:var(--primary);
+    padding:14px 22px;
+    border-radius:14px;
+    font-size:15px;
+    font-weight:600;
+    cursor:pointer;
+    transition:.25s;
+}
+
+.back-button:hover{
+    background:var(--primary);
+    color:white;
+}
+/* ======================================================
+   DETAIL CARD
+====================================================== */
+.announcement-detail-card{
+    background:white;
+    border-radius:24px;
+    padding:45px;
+    box-shadow:var(--shadow);
+}
+
+.detail-top{
+    display:flex;
+    gap:12px;
+    flex-wrap:wrap;
+    margin-bottom:28px;
+}
+/* ======================================================
+   DETAIL META
+====================================================== */
+.detail-meta{
+    display:flex;
+    gap:20px;
+    flex-wrap:wrap;
+    margin-bottom:30px;
+}
+
+.meta-box{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    background:#F8FAFC;
+    padding:14px 18px;
+    border-radius:14px;
+    color:var(--text);
+    border:1px solid var(--border);
+}
+
+.detail-divider{
+    border:none;
+    border-top:1px solid var(--border);
+    margin:35px 0;
+}
+/* ======================================================
+   DETAIL CONTENT
+====================================================== */
+.detail-content{
+    color:var(--text);
+    font-size:17px;
+    line-height:2;
+}
+
+.detail-content p{
+    white-space:pre-line;
+}
+/* ======================================================
+   ATTACHMENT
+====================================================== */
+.attachment-box{
+    margin-top:45px;
+    padding-top:35px;
+    border-top:1px solid var(--border);
+}
+
+.attachment-box h3{
+    margin-bottom:18px;
+    color:var(--text);
+}
+
+.download-button{
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+    background:var(--primary);
+    color:white;
+    padding:15px 22px;
+    border-radius:14px;
+    text-decoration:none;
+    font-weight:600;
+    transition:.25s;
+}
+
+.download-button:hover{
+    background:var(--primary-dark);
+    transform:translateY(-2px);
+}
+
+.loading-text{
+    text-align:center;
+    padding:80px;
+    color:var(--text-light);
+}
+/* ======================================================
+   DETAIL RESPONSIVE
+====================================================== */
+@media (max-width:768px){
+
+    .announcement-detail-page{
+        padding:0 18px;
+    }
+
+    .announcement-detail-card{
+        padding:28px;
+    }
+
+    .detail-meta{
+        flex-direction:column;
+    }
+
+    .meta-box{
+        width:100%;
+    }
+
+    .download-button{
+        width:100%;
+        justify-content:center;
+    }
+}
+
+.announcement-section{
+    max-width:1400px;
+    margin:80px auto 100px;
+    padding:0 40px;
+
+}
+
+.announcement-grid{
+  display:grid;
+  grid-template-columns:
+    repeat(auto-fit,minmax(320px,1fr));
+  gap:30px;
+}
+
+.announcement-card{
+  background:white;
+  border-radius:20px;
+  padding:25px;
+  box-shadow:
+    0 10px 25px rgba(0,0,0,.08);
+  transition:.3s;
+}
+
+.announcement-card:hover{
+  transform:translateY(-5px);
+}
+
+.announcement-btn{
+  margin-top:15px;
+  background:var(--primary-blue);
+  color:white;
+  border:none;
+  padding:10px 18px;
+  border-radius:10px;
+  cursor:pointer;
+}
