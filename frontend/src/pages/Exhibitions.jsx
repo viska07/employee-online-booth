@@ -234,7 +234,7 @@ function Exhibitions() {
 
                                   <div className="progress-info">
 
-                                      {progress.opened} / {progress.total} {language.booth.materials}
+                                      {progress.viewed} / {progress.total} {language.booth.materials}
 
                                   </div>
 

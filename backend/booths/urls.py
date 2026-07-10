@@ -9,10 +9,13 @@ from .views import (
     ViewedBoothAPIView,
     ViewedContentAPIView,
     BoothProgressAPIView,
+    BoothContentViewersAPIView,
 )
 from .admin_views import (
     AdminBoothListCreateAPIView,
     AdminBoothDetailAPIView,
+    AdminBoothContentAPIView,
+    AdminBoothContentDetailAPIView,
 )
 
 urlpatterns = [
@@ -81,6 +84,23 @@ urlpatterns = [
         "management/<int:booth_id>/",
         AdminBoothDetailAPIView.as_view(),
         name="admin-booth-detail",
+    ),
+
+    path(
+        "management/<int:booth_id>/contents/",
+        AdminBoothContentAPIView.as_view(),
+        name="admin-booth-contents",
+    ),
+
+    path(
+        "management/content/<int:content_id>/",
+        AdminBoothContentDetailAPIView.as_view(),
+        name="admin-booth-content-detail",
+    ),
+
+    path(
+        "management/content/<int:content_id>/viewers/",
+        BoothContentViewersAPIView.as_view(),
     ),
 
 ]

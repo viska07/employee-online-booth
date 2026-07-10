@@ -64,12 +64,14 @@ class DashboardStatisticsAPIView(APIView):
 
         total_announcements = Announcement.objects.count()
 
-        total_views = BoothActivity.objects.filter(
-            action='VIEW'
+        total_booth_views = BoothActivity.objects.filter(
+            action="VIEW",
+            content__isnull=True
         ).count()
 
-        total_opens = BoothActivity.objects.filter(
-            action='OPEN'
+        total_content_views = BoothActivity.objects.filter(
+            action="VIEW",
+            content__isnull=False
         ).count()
 
         total_completes = BoothActivity.objects.filter(
@@ -79,8 +81,8 @@ class DashboardStatisticsAPIView(APIView):
         return Response({
             'total_booths': total_booths,
             'total_announcements': total_announcements,
-            'total_views': total_views,
-            'total_opens': total_opens,
+            'total_booth_views': total_booth_views,
+            'total_content_views': total_content_views,
             'total_completes': total_completes,
         })
     
@@ -93,12 +95,14 @@ class DashboardAnalyticsAPIView(APIView):
 
     def get(self, request):
 
-        total_views = BoothActivity.objects.filter(
-            action='VIEW'
+        total_booth_views = BoothActivity.objects.filter(
+            action="VIEW",
+            content__isnull=True
         ).count()
 
-        total_opens = BoothActivity.objects.filter(
-            action='OPEN'
+        total_content_views = BoothActivity.objects.filter(
+            action="VIEW",
+            content__isnull=False
         ).count()
 
         total_completes = BoothActivity.objects.filter(
@@ -115,8 +119,8 @@ class DashboardAnalyticsAPIView(APIView):
         )
 
         return Response({
-            'total_views': total_views,
-            'total_opens': total_opens,
+            'total_booth_views': total_booth_views,
+            'total_content_views': total_content_views,
             'total_completes': total_completes,
             'most_viewed_booth': (
                 most_viewed['booth__title']

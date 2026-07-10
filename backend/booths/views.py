@@ -40,6 +40,46 @@ class BoothActivityCreateAPIView(APIView):
         data["user_name"] = request.user.username
         data["user_email"] = request.user.email
 
+        booth = data.get("booth")
+        content = data.get("content")
+        action = data.get("action")
+
+        # ===================================
+        # Cegah duplicate VIEW
+        # ===================================
+
+        if action == "VIEW":
+
+            if content:
+
+                activity = BoothActivity.objects.filter(
+                    user_email=request.user.email,
+                    content_id=content,
+                    action="VIEW"
+                ).first()
+
+            else:
+
+                activity = BoothActivity.objects.filter(
+                    user_email=request.user.email,
+                    booth_id=booth,
+                    content__isnull=True,
+                    action="VIEW"
+                ).first()
+
+            if activity:
+
+                serializer = BoothActivitySerializer(activity)
+
+                return Response(
+                    serializer.data,
+                    status=status.HTTP_200_OK
+                )
+
+        # ===================================
+        # Simpan activity baru
+        # ===================================
+
         serializer = BoothActivitySerializer(data=data)
 
         if serializer.is_valid():
@@ -155,7 +195,7 @@ class ViewedContentAPIView(APIView):
             BoothActivity.objects.filter(
                 user_email=request.user.email,
                 booth_id=booth_id,
-                action="OPEN",
+                action="VIEW",
                 content__isnull=False
             )
             .values_list(
@@ -174,37 +214,80 @@ class BoothProgressAPIView(APIView):
     def get(self, request):
 
         progress_data = []
+
         booths = Booth.objects.filter(
             is_active=True
         )
+
         for booth in booths:
+
             total_contents = BoothContent.objects.filter(
                 booth=booth
             ).count()
-            opened_contents = BoothActivity.objects.filter(
+
+            viewed_contents = BoothActivity.objects.filter(
                 booth=booth,
                 user_email=request.user.email,
-                action="OPEN",
+                action="VIEW",
                 content__isnull=False
-            ).values("content").distinct().count()
+            ).values(
+                "content"
+            ).distinct().count()
+
             if total_contents == 0:
+
                 progress = 0
+
             else:
+
                 progress = round(
-                    (opened_contents / total_contents) * 100
+
+                    (viewed_contents / total_contents) * 100
+
                 )
+
             if progress == 0:
+
                 status = "NEW"
+
             elif progress == 100:
+
                 status = "COMPLETED"
+
             else:
+
                 status = "IN_PROGRESS"
+
             progress_data.append({
+
                 "booth": booth.id,
-                "opened": opened_contents,
+
+                "viewed": viewed_contents,
+
                 "total": total_contents,
+
                 "progress": progress,
+
                 "status": status,
+
             })
 
         return Response(progress_data)
+    
+class BoothContentViewersAPIView(APIView):
+
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, content_id):
+
+        viewers = BoothActivity.objects.filter(
+            content_id=content_id,
+            action="VIEW"
+        ).order_by("-created_at")
+
+        serializer = BoothActivitySerializer(
+            viewers,
+            many=True
+        )
+
+        return Response(serializer.data)

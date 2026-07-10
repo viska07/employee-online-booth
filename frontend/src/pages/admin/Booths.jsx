@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import api from "../../services/api";
 import "../../styles/admin.css";
 
 function Booths() {
+    const navigate = useNavigate();
     const [booths, setBooths] = useState([]);
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState("");
@@ -24,7 +26,9 @@ function Booths() {
         type: "success",
     });
 
-    useEffect(() => {
+    const fetchBooths = () => {
+
+        setLoading(true);
 
         api.get("/booths/management/")
 
@@ -45,6 +49,12 @@ function Booths() {
                 setLoading(false);
 
             });
+
+    };
+
+    useEffect(() => {
+
+        fetchBooths();
 
     }, []);
 
@@ -85,6 +95,8 @@ function Booths() {
             setPreviewImage(null);
 
         }
+
+        document.body.style.overflow = "hidden";
 
         setShowModal(true);
 
@@ -174,35 +186,8 @@ function Booths() {
                     );
 
                 }
-
-            if (editingBooth) {
-
-                setBooths((previous) =>
-
-                    previous.map((item) =>
-
-                        item.id === editingBooth.id
-
-                            ? response.data
-
-                            : item
-
-                    )
-
-                );
-
-            } else {
-
-                setBooths((previous) => [
-
-                    response.data,
-
-                    ...previous,
-
-                ]);
-
-            }
-
+            fetchBooths();   
+            document.body.style.overflow = "auto";
             setShowModal(false);
             setFormData({
                 title: "",
@@ -259,17 +244,7 @@ function Booths() {
                 `/booths/management/${deleteBooth.id}/`
 
             );
-
-            setBooths((previous) =>
-
-                previous.filter(
-
-                    (item) => item.id !== deleteBooth.id
-
-                )
-
-            );
-
+            fetchBooths();
             setDeleteBooth(null);
             setToast({
                 show: true,
@@ -377,35 +352,27 @@ function Booths() {
 
                 (
 
-                    <div className="booth-management-grid">
+                        filteredBooths.length > 0 ? (
 
-                        {
+                            <div className="booth-management-grid">
 
-                            filteredBooths.map((booth) => (
+                                {filteredBooths.map((booth) => (
 
-                                <div
-                                    key={booth.id}
-                                    className="admin-booth-card"
-                                >
+                                    <div
+                                        key={booth.id}
+                                        className="admin-booth-card"
+                                    >
 
-                                    <div className="admin-booth-image">
+                                        <div className="admin-booth-image">
 
-                                        {
-
-                                            booth.thumbnail ?
-
-                                            (
+                                            {booth.thumbnail ? (
 
                                                 <img
                                                     src={`http://127.0.0.1:8000${booth.thumbnail}`}
                                                     alt={booth.title}
                                                 />
 
-                                            )
-
-                                            :
-
-                                            (
+                                            ) : (
 
                                                 <div className="image-placeholder">
 
@@ -413,49 +380,35 @@ function Booths() {
 
                                                 </div>
 
-                                            )
-
-                                        }
-
-                                    </div>
-
-                                    <div className="admin-booth-body">
-
-                                        <h2>
-
-                                            {booth.title}
-
-                                        </h2>
-
-                                        <p>
-
-                                            {booth.description}
-
-                                        </p>
-
-                                        <div className="admin-booth-info">
-
-                                            <span>
-
-                                                👀 {booth.view_count} Views
-
-                                            </span>
-
-                                            <span>
-
-                                                📚 {booth.contents_count} Materials
-
-                                            </span>
+                                            )}
 
                                         </div>
 
-                                        <div className="admin-booth-status">
+                                        <div className="admin-booth-body">
 
-                                            {
+                                            <h2>{booth.title}</h2>
 
-                                                booth.is_active ?
+                                            <p>{booth.description}</p>
 
-                                                (
+                                            <div className="admin-booth-info">
+
+                                                <span>
+
+                                                    👀 {booth.view_count} Views
+
+                                                </span>
+
+                                                <span>
+
+                                                    📚 {booth.contents_count} Materials
+
+                                                </span>
+
+                                            </div>
+
+                                            <div className="admin-booth-status">
+
+                                                {booth.is_active ? (
 
                                                     <span className="status-active">
 
@@ -463,11 +416,7 @@ function Booths() {
 
                                                     </span>
 
-                                                )
-
-                                                :
-
-                                                (
+                                                ) : (
 
                                                     <span className="status-inactive">
 
@@ -475,15 +424,9 @@ function Booths() {
 
                                                     </span>
 
-                                                )
+                                                )}
 
-                                            }
-
-                                            {
-
-                                                booth.is_featured &&
-
-                                                (
+                                                {booth.is_featured && (
 
                                                     <span className="status-featured">
 
@@ -491,64 +434,128 @@ function Booths() {
 
                                                     </span>
 
-                                                )
+                                                )}
 
-                                            }
+                                            </div>
 
-                                        </div>
+                                            <div className="admin-booth-action">
 
-                                        <div className="admin-booth-action">
+                                                <button
+                                                    className="content-button"
+                                                    onClick={() => navigate(`/management/booths/${booth.id}/contents`)}
+                                                >
 
-                                            <button
-                                                onClick={() =>
+                                                    Content
 
-                                                    handleEditBooth(booth)
+                                                </button>
 
-                                                }
-                                            >
+                                                <button
+                                                    onClick={() => handleEditBooth(booth)}
+                                                >
 
-                                                Edit
+                                                    Edit
 
-                                            </button>
+                                                </button>
 
-                                            <button
-                                                className="delete-button"
-                                                onClick={() =>
+                                                <button
+                                                    className="delete-button"
+                                                    onClick={() => setDeleteBooth(booth)}
+                                                >
 
-                                                    setDeleteBooth(booth)
+                                                    Delete
 
-                                                }
-                                            >
+                                                </button>
 
-                                                Delete
-
-                                            </button>
+                                            </div>
 
                                         </div>
 
                                     </div>
 
+                                ))}
+
+                            </div>
+
+                        ) : (
+
+                            <div className="empty-state">
+
+                                <div className="empty-icon">
+
+                                    📂
+
                                 </div>
 
-                            ))
+                                <h2>
 
-                        }
+                                    No Booth Available
 
-                    </div>
+                                </h2>
 
-                )
+                                <p>
 
-            }
+                                    There are no booths available yet.
+                                    Create your first booth by clicking the button below.
 
-            {
+                                </p>
+
+                                <button
+                                    className="primary-button"
+                                    onClick={() => {
+
+                                        setEditingBooth(null);
+
+                                        setPreviewImage(null);
+
+                                        setFormData({
+
+                                            title: "",
+
+                                            description: "",
+
+                                            thumbnail: null,
+
+                                            is_active: true,
+
+                                            is_featured: false,
+
+                                        });
+
+                                        document.body.style.overflow = "hidden";
+
+                                        setShowModal(true);
+
+                                    }}
+                                >
+
+                                    + Add Booth
+
+                                </button>
+
+                            </div>
+                        )
+
+                    )
+                }
+                    
+                {
 
                 showModal && (
 
                     <div
                         className="modal-overlay"
                         onClick={() => {
+                            document.body.style.overflow = "auto";
                             setShowModal(false);
+                            setEditingBooth(null);
                             setPreviewImage(null);
+                            setFormData({
+                                title: "",
+                                description: "",
+                                thumbnail: null,
+                                is_active: true,
+                                is_featured: false,
+                            });
                         }}
                     >
 
@@ -649,11 +656,81 @@ function Booths() {
 
                                             if (!file) return;
 
+                                            const allowedTypes = [
+
+                                                "image/jpeg",
+
+                                                "image/jpg",
+
+                                                "image/png",
+
+                                            ];
+
+                                            if (!allowedTypes.includes(file.type)) {
+
+                                                setToast({
+
+                                                    show: true,
+
+                                                    message: "Only JPG, JPEG and PNG images are allowed.",
+
+                                                    type: "error",
+
+                                                });
+
+                                                setTimeout(() => {
+
+                                                    setToast({
+
+                                                        show: false,
+
+                                                        message: "",
+
+                                                        type: "error",
+
+                                                    });
+
+                                                }, 3000);
+
+                                                return;
+
+                                            }
+
+                                            if (file.size > 5 * 1024 * 1024) {
+
+                                                setToast({
+
+                                                    show: true,
+
+                                                    message: "Image size must be less than 5 MB.",
+
+                                                    type: "error",
+
+                                                });
+
+                                                setTimeout(() => {
+
+                                                    setToast({
+
+                                                        show: false,
+
+                                                        message: "",
+
+                                                        type: "error",
+
+                                                    });
+
+                                                }, 3000);
+
+                                                return;
+
+                                            }
+
                                             setFormData({
 
                                                 ...formData,
 
-                                                thumbnail: file
+                                                thumbnail: file,
 
                                             });
 
@@ -832,7 +909,20 @@ function Booths() {
 
                                 <button
                                     className="cancel-button"
-                                    onClick={() => setShowModal(false)}
+                                    onClick={() => {
+                                        document.body.style.overflow = "auto";
+                                        setShowModal(false);
+                                        setEditingBooth(null);
+                                        setPreviewImage(null);
+                                        setFormData({
+                                            title: "",
+                                            description: "",
+                                            thumbnail: null,
+                                            is_active: true,
+                                            is_featured: false,
+                                        });
+
+                                    }}
                                 >
 
                                     Cancel

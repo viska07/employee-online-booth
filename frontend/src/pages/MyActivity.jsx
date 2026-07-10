@@ -24,43 +24,72 @@ function MyActivity() {
 
     }, []);
 
-    const getActivityIcon = (action) => {
+    const getActivityIcon = (activity) => {
 
-        switch (action) {
+        if (
+            activity.action === "VIEW" &&
+            activity.is_content
+        ) {
 
-            case "VIEW":
-                return "👁️";
-
-            case "OPEN":
-                return "📄";
-
-            case "COMPLETE":
-                return "✅";
-
-            default:
-                return "📌";
+            return "📄";
 
         }
+
+        if (
+            activity.action === "VIEW"
+        ) {
+
+            return "🏢";
+
+        }
+
+        if (
+            activity.action === "COMPLETE"
+        ) {
+
+            return "✅";
+
+        }
+
+        return "📌";
 
     };
 
-    const getActivityText = (action) => {
+    const getActivityText = (activity) => {
 
-        switch (action) {
+        if (
 
-            case "VIEW":
-                return language.activity.viewedBooth;
+            activity.action === "VIEW" &&
 
-            case "OPEN":
-                return language.activity.openedResource;
+            activity.is_content
 
-            case "COMPLETE":
-                return language.activity.completed;
+        ) {
 
-            default:
-                return action;
+            return "Viewed Content";
 
         }
+
+        if (
+
+            activity.action === "VIEW"
+
+        ) {
+
+            return "Visited Booth";
+
+        }
+
+        if (
+
+            activity.action === "COMPLETE"
+
+        ) {
+
+            return "Completed";
+
+        }
+
+        return activity.action;
 
     };
 
@@ -157,9 +186,7 @@ function MyActivity() {
 
                                                 {
 
-                                                    getActivityIcon(
-                                                        activity.action
-                                                    )
+                                                    getActivityIcon(activity)
 
                                                 }
 
@@ -169,7 +196,19 @@ function MyActivity() {
 
                                                 <h3>
 
-                                                    {activity.booth_title}
+                                                    {
+
+                                                        activity.is_content
+
+                                                        ?
+
+                                                        activity.content_title
+
+                                                        :
+
+                                                        activity.booth_title
+
+                                                    }
 
                                                 </h3>
 
@@ -177,9 +216,7 @@ function MyActivity() {
 
                                                     {
 
-                                                        getActivityText(
-                                                            activity.action
-                                                        )
+                                                        getActivityText(activity)
 
                                                     }
 

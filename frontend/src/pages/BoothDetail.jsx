@@ -69,7 +69,7 @@ function BoothDetail() {
 
         booth: booth.id,
         content: content.id,
-        action: "OPEN",
+        action: "VIEW",
 
       });
 

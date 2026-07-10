@@ -1,6 +1,5 @@
 from django.db import models
 
-
 class Booth(models.Model):
 
     title = models.CharField(max_length=255)
@@ -90,6 +89,11 @@ class BoothContent(models.Model):
         ('ARTICLE', 'Article'),
     )
 
+    SOURCE_TYPES = (
+        ('UPLOAD', 'Upload'),
+        ('LINK', 'External Link'),
+    )
+
     booth = models.ForeignKey(
         Booth,
         on_delete=models.CASCADE,
@@ -110,12 +114,29 @@ class BoothContent(models.Model):
         choices=CONTENT_TYPES
     )
 
+    source_type = models.CharField(
+        max_length=20,
+        choices=SOURCE_TYPES,
+        default="UPLOAD"
+    )
+
     file = models.FileField(
-        upload_to='contents/'
+        upload_to="contents/",
+        blank=True,
+        null=True
+    )
+
+    external_url = models.URLField(
+        blank=True,
+        null=True
     )
 
     created_at = models.DateTimeField(
         auto_now_add=True
+    )
+
+    updated_at = models.DateTimeField(
+        auto_now=True
     )
 
     def __str__(self):

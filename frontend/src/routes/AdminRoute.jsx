@@ -1,5 +1,6 @@
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import BoothContents from "../pages/admin/BoothContents";
 
 function AdminRoute({ children }) {
 

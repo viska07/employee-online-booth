@@ -17,10 +17,12 @@ import AdminLayout from "./layouts/AdminLayout";
 
 import Dashboard from "./pages/admin/Dashboard";
 import Booths from "./pages/admin/Booths";
+import BoothContents from "./pages/admin/BoothContents";
 import AnnouncementsAdmin from "./pages/admin/Announcements";
 import Employees from "./pages/admin/Employees";
 import Reports from "./pages/admin/Reports";
 import Settings from "./pages/admin/Settings";
+import { ToastContainer } from "react-toastify";
 
 function App() {
 
@@ -135,6 +137,11 @@ function App() {
                     />
 
                     <Route
+                        path="booths/:boothId/contents"
+                        element={<BoothContents />}
+                    />
+
+                    <Route
                         path="announcements"
                         element={<AnnouncementsAdmin />}
                     />
@@ -157,6 +164,16 @@ function App() {
                 </Route>
 
             </Routes>
+
+            <ToastContainer
+                position="top-right"
+                autoClose={3000}
+                hideProgressBar={false}
+                newestOnTop
+                closeOnClick
+                pauseOnHover
+                theme="light"
+            />
 
         </BrowserRouter>
 
