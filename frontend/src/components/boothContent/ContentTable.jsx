@@ -232,70 +232,51 @@ function ContentTable({
 
                                     </td>
 
-                                    <td>
+                                    <td className="content-action-cell">
 
-                                        <button
+                                        <div className="content-action-buttons">
 
-                                            className="table-preview-button"
+                                            <button
+                                                type="button"
+                                                className="table-preview-button"
+                                                onClick={() =>
+                                                    setPreviewContent(content)
+                                                }
+                                            >
+                                                👁 Preview
+                                            </button>
 
-                                            onClick={() => {
+                                            <button
+                                                type="button"
+                                                className="table-edit-button"
+                                                onClick={() =>
+                                                    handleEditContent(content)
+                                                }
+                                            >
+                                                ➡ Edit
+                                            </button>
 
-                                                console.log(content);
+                                            <button
+                                                type="button"
+                                                className="table-view-button"
+                                                onClick={() =>
+                                                    handleViewers(content)
+                                                }
+                                            >
+                                                👥 Viewers
+                                            </button>
 
-                                                setPreviewContent(content);
+                                            <button
+                                                type="button"
+                                                className="table-delete-button"
+                                                onClick={() =>
+                                                    setDeleteContent(content)
+                                                }
+                                            >
+                                                🗑 Delete
+                                            </button>
 
-                                            }}
-
-                                        >
-
-                                            👁 Preview
-
-                                        </button>
-
-                                        <button
-
-                                            className="table-edit-button"
-
-                                            onClick={() =>
-
-                                                handleEditContent(content)
-
-                                            }
-
-                                        >
-
-                                            ✏ Edit
-
-                                        </button>
-
-                                        <button
-                                            className="table-view-button"
-                                            onClick={() => {
-
-                                                console.log(content);
-
-                                                handleViewers(content);
-
-                                            }}
-                                        >
-                                            👥 Viewers
-                                        </button>
-
-                                        <button
-
-                                            className="table-delete-button"
-
-                                            onClick={() =>
-
-                                                setDeleteContent(content)
-
-                                            }
-
-                                        >
-
-                                            🗑 Delete
-
-                                        </button>
+                                        </div>
 
                                     </td>
 

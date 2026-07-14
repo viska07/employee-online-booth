@@ -213,27 +213,47 @@ function AnnouncementModal({
                     >
 
                         <option value="ALL">
-
-                            All Employee
-
+                            All Employees
                         </option>
 
                         <option value="HR">
-
-                            HR
-
+                            Human Resource
                         </option>
 
                         <option value="PRODUCTION">
-
                             Production
-
                         </option>
 
                         <option value="ENGINEERING">
-
                             Engineering
+                        </option>
 
+                        <option value="QUALITY">
+                            Quality Control
+                        </option>
+
+                        <option value="WAREHOUSE">
+                            Warehouse
+                        </option>
+
+                        <option value="PURCHASING">
+                            Purchasing
+                        </option>
+
+                        <option value="FINANCE">
+                            Finance
+                        </option>
+
+                        <option value="IT">
+                            Information Technology
+                        </option>
+
+                        <option value="GA">
+                            General Affairs
+                        </option>
+
+                        <option value="MARKETING">
+                            Marketing
                         </option>
 
                     </select>

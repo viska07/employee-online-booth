@@ -36,13 +36,27 @@ function AnnouncementSearch({
 
             <button
 
-                className="add-button"
+                type="button"
 
-                onClick={handleAddAnnouncement}
+                className="announcement-add-button"
+
+                onClick={() =>
+                    setShowModal(true)
+                }
 
             >
 
-                + Add Announcement
+                <span className="announcement-add-symbol">
+
+                    +
+
+                </span>
+
+                <span>
+
+                    Add Announcement
+
+                </span>
 
             </button>
 

@@ -10,6 +10,8 @@ function AnnouncementTable({
 
     setPreviewAnnouncement,
 
+    handleReaders,
+
 }){
 
     return(
@@ -43,6 +45,12 @@ function AnnouncementTable({
                         <th>
 
                             Status
+
+                        </th>
+
+                        <th>
+
+                            Readers
 
                         </th>
 
@@ -111,6 +119,31 @@ function AnnouncementTable({
                                             "Draft"
 
                                         }
+
+                                    </td>
+
+                                    <td>
+
+                                        <span
+                                            className="announcement-readers-link"
+                                            onClick={() =>
+                                                handleReaders(
+                                                    announcement
+                                                )
+                                            }
+                                        >
+
+                                            {announcement.readers}
+
+                                            {" "}
+
+                                            {
+                                                announcement.readers === 1
+                                                    ? "Reader"
+                                                    : "Readers"
+                                            }
+
+                                        </span>
 
                                     </td>
 
@@ -190,7 +223,7 @@ function AnnouncementTable({
 
                             <td
 
-                                colSpan="5"
+                                colSpan="6"
 
                             >
 

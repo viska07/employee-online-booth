@@ -1,44 +1,92 @@
 import { useEffect, useState } from "react";
 import { useLanguage } from "../language/LanguageContext";
 import { useNavigate, useParams } from "react-router-dom";
-
 import Navbar from "../components/Navbar";
 import api from "../services/api";
-
 import "../styles/announcement.css";
 
 function AnnouncementDetail() {
 
     const { id } = useParams();
-
     const navigate = useNavigate();
-
     const [announcement, setAnnouncement] = useState(null);
-
     const [loading, setLoading] = useState(true);
-
     const { language } = useLanguage();
 
     useEffect(() => {
 
-        api.get(`/announcements/${id}/`)
-            .then((response) => {
+        async function fetchAnnouncement() {
 
-                setAnnouncement(response.data);
+            try {
 
-            })
-            .catch((error) => {
+                const response = await api.get(
 
-                console.error(error);
+                    `/announcements/${id}/`
 
-            })
-            .finally(() => {
+                );
+
+                setAnnouncement(
+                    response.data
+                );
+
+                try {
+
+                    await api.post(
+
+                        "/announcements/activity/",
+
+                        {
+
+                            announcement: Number(id),
+
+                            action: "READ",
+
+                        }
+
+                    );
+
+                }
+
+                catch (activityError) {
+
+                    console.error(
+
+                        "Read Activity Error:",
+
+                        activityError.response?.data
+
+                    );
+
+                }
+
+            }
+
+            catch (error) {
+
+                console.error(
+
+                    "Announcement Detail Error:",
+
+                    error.response?.data
+
+                );
+
+                setAnnouncement(null);
+
+            }
+
+            finally {
 
                 setLoading(false);
 
-            });
+            }
+
+        }
+
+        fetchAnnouncement();
 
     }, [id]);
+
 
     if (loading) {
 

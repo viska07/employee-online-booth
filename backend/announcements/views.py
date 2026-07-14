@@ -1,32 +1,103 @@
 from django.shortcuts import get_object_or_404
-
+from django.utils import timezone
+from django.db.models import Q
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from core.permissions import IsAdminEmployee
-from .models import Announcement
 from .serializers import AnnouncementSerializer
+from .activity_serializers import (
+    AnnouncementActivitySerializer
+)
+from .models import (
+    Announcement,
+    AnnouncementActivity,
+)
 
+def get_available_announcements(request):
 
+    now = timezone.now()
+
+    announcements = Announcement.objects.filter(
+
+        is_published=True,
+
+        start_date__lte=now
+
+    ).filter(
+
+        Q(end_date__isnull=True)
+
+        |
+
+        Q(end_date__gte=now)
+
+    )
+
+    try:
+
+        department = (
+            request.user
+            .employee_profile
+            .department
+        )
+
+    except:
+
+        department = None
+
+    if department:
+
+        announcements = announcements.filter(
+
+            Q(target_audience="ALL")
+
+            |
+
+            Q(target_audience=department)
+
+        )
+
+    else:
+
+        announcements = announcements.filter(
+
+            target_audience="ALL"
+
+        )
+
+    return announcements
 
 class AnnouncementListAPIView(APIView):
 
+    permission_classes = [
+        IsAuthenticated
+    ]
+
     def get(self, request):
 
-        announcements = Announcement.objects.filter(
-            is_published=True
-        ).order_by(
-            "-is_important",
-            "-created_at"
+        announcements = (
+            get_available_announcements(
+                request
+            )
+            .order_by(
+                "-is_important",
+                "-created_at"
+            )
         )
 
         serializer = AnnouncementSerializer(
+
             announcements,
+
             many=True
+
         )
 
-        return Response(serializer.data)
+        return Response(
+            serializer.data
+        )
     
 class AnnouncementManagementListAPIView(APIView):
 
@@ -50,15 +121,19 @@ class AnnouncementManagementListAPIView(APIView):
 
 class AnnouncementDetailAPIView(APIView):
 
+    permission_classes = [
+        IsAuthenticated
+    ]
+
     def get(self, request, pk):
 
         announcement = get_object_or_404(
 
-            Announcement,
+            get_available_announcements(
+                request
+            ),
 
-            pk=pk,
-
-            is_published=True
+            pk=pk
 
         )
 
@@ -68,7 +143,9 @@ class AnnouncementDetailAPIView(APIView):
 
         )
 
-        return Response(serializer.data)
+        return Response(
+            serializer.data
+        )
     
 class AnnouncementManagementAPIView(APIView):
 
@@ -134,30 +211,164 @@ class AnnouncementManagementAPIView(APIView):
             status=status.HTTP_204_NO_CONTENT
         )
     
-class AnnouncementManagementListAPIView(APIView):
+class AnnouncementActivityCreateAPIView(APIView):
 
     permission_classes = [
-
-        IsAuthenticated,
-
-        IsAdminEmployee,
-
+        IsAuthenticated
     ]
 
-    def get(self, request):
+    def post(self, request):
 
-        announcements = Announcement.objects.all().order_by(
+        announcement_id = request.data.get(
+            "announcement"
+        )
+
+        action = request.data.get(
+            "action",
+            "READ"
+        )
+
+        announcement = get_object_or_404(
+
+            get_available_announcements(
+                request
+            ),
+
+            id=announcement_id
+
+        )
+
+        activity, created = (
+            AnnouncementActivity.objects.get_or_create(
+
+                announcement=announcement,
+
+                user_email=request.user.email,
+
+                action=action,
+
+                defaults={
+
+                    "user_name":
+                        request.user.username,
+
+                }
+
+            )
+        )
+
+        serializer = (
+            AnnouncementActivitySerializer(
+                activity
+            )
+        )
+
+        return Response(
+
+            serializer.data,
+
+            status=(
+
+                status.HTTP_201_CREATED
+
+                if created
+
+                else status.HTTP_200_OK
+
+            )
+
+        )
+    
+class AnnouncementReadersAPIView(APIView):
+
+    permission_classes = [
+        IsAuthenticated,
+        IsAdminEmployee,
+    ]
+
+    def get(self, request, announcement_id):
+
+        announcement = get_object_or_404(
+
+            Announcement,
+
+            id=announcement_id
+
+        )
+
+        readers = AnnouncementActivity.objects.filter(
+
+            announcement=announcement,
+
+            action="READ"
+
+        ).order_by(
 
             "-created_at"
 
         )
 
-        serializer = AnnouncementSerializer(
+        serializer = AnnouncementActivitySerializer(
 
-            announcements,
+            readers,
 
             many=True
 
         )
 
-        return Response(serializer.data)
+        return Response(
+            serializer.data
+        )
+    
+class AnnouncementStatisticsAPIView(APIView):
+
+    permission_classes = [
+        IsAuthenticated,
+        IsAdminEmployee,
+    ]
+
+    def get(self, request):
+
+        total_announcements = (
+            Announcement.objects.count()
+        )
+
+        total_published = (
+            Announcement.objects.filter(
+                is_published=True
+            ).count()
+        )
+
+        total_important = (
+            Announcement.objects.filter(
+                is_important=True
+            ).count()
+        )
+
+        total_readers = (
+            AnnouncementActivity.objects.filter(
+                action="READ"
+            )
+            .values(
+                "announcement_id",
+                "user_email"
+            )
+            .distinct()
+            .count()
+        )
+
+        return Response({
+
+            "total_announcements":
+                total_announcements,
+
+            "total_published":
+                total_published,
+
+            "total_important":
+                total_important,
+
+            "total_readers":
+                total_readers,
+
+        })
