@@ -40,6 +40,8 @@ function Announcements() {
         is_important:false,
         is_published:true,
         send_email:false,
+        email_recipient_mode:"AUDIENCE",
+        selected_email_recipients:[],
         send_whatsapp:false,
     });
 
@@ -192,6 +194,16 @@ function Announcements() {
             send_email:
 
                 announcement.send_email,
+
+            email_recipient_mode:
+
+                announcement.email_recipient_mode
+                || "AUDIENCE",
+
+            selected_email_recipients:
+
+                announcement.selected_email_recipients
+                || {},
 
             send_whatsapp:
 
@@ -359,6 +371,28 @@ function Announcements() {
 
                 formData.send_email
 
+            );
+
+            data.append(
+
+                "email_recipient_mode",
+
+                formData.email_recipient_mode
+
+            );
+
+            formData.selected_email_recipients.forEach(
+
+                employeeId => {
+
+                    data.append(
+
+                        "selected_email_recipients",
+
+                        employeeId
+
+                    );
+                }
             );
 
             data.append(

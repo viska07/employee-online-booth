@@ -8,6 +8,7 @@ from .views import (
     AnnouncementManagementListAPIView,
     AnnouncementReadersAPIView,
     AnnouncementStatisticsAPIView,
+    AnnouncementEmailRecipientsAPIView,
 )
 
 urlpatterns = [
@@ -35,6 +36,11 @@ urlpatterns = [
     path(
         "management/<int:announcement_id>/readers/",
         AnnouncementReadersAPIView.as_view()
+    ),
+
+    path(
+        "management/email-recipients/",
+        AnnouncementEmailRecipientsAPIView.as_view()
     ),
 
     path(

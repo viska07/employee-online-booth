@@ -1,17 +1,13 @@
+import EmployeeRecipientSelector from "./EmployeeRecipientSelector";
+import "../../styles/announcementRecipient.css";
+
 function AnnouncementModal({
-
     showModal,
-
     setShowModal,
-
     editingAnnouncement,
-
     formData,
-
     setFormData,
-
     handleSaveAnnouncement,
-
     saving,
 
 }){
@@ -416,9 +412,9 @@ function AnnouncementModal({
 
                 </div>
 
-                <div className="checkbox-group">
+                <div className="announcement-email-section">
 
-                    <label>
+                    <label className="announcement-checkbox-row">
 
                         <input
 
@@ -426,23 +422,263 @@ function AnnouncementModal({
 
                             checked={formData.send_email}
 
-                            onChange={(e)=>
+                            onChange={(e) => {
+
+                                const checked = e.target.checked;
 
                                 setFormData({
 
                                     ...formData,
 
-                                    send_email:e.target.checked
+                                    send_email: checked,
 
-                                })
+                                    email_recipient_mode:
+                                    checked
+                                        ? formData.email_recipient_mode
+                                        : "AUDIENCE",
 
-                            }
+                                    selected_email_recipients:
+                                        checked
+                                            ? formData.selected_email_recipients
+                                            : [],
+
+                                });
+
+                            }}
 
                         />
 
-                        Send Email
+                        <div>
+
+                            <strong>
+                                Send Email Notification
+                            </strong>
+
+                            <p>
+                                Notify employee about this announcement by email.
+                            </p>
+
+                        </div>
 
                     </label>
+
+                    {
+
+                        formData.send_email && (
+
+                            <div className="email-recipient-options">
+
+                                <span className="recipient-option-title">
+                                    Send notification to
+                                </span>
+
+                                <label
+
+                                    className={
+
+                                        formData.email_recipient_mode === "AUDIENCE"
+
+                                        ? "recipient-mode-card selected"
+                                        : "recipient-mode-card"
+
+                                    }
+
+                                >
+
+                                    <input
+
+                                        type="radio"
+                                        name="email_recipient_mode"
+                                        value="AUDIENCE"
+                                        checked={
+
+                                            formData.email_recipient_mode === "AUDIENCE"
+
+                                        }
+
+                                        onChange={() =>
+
+                                            setFormData({
+
+                                                ...formData,
+
+                                                email_recipient_mode: "AUDIENCE",
+
+                                                selected_email_recipients: [],
+
+                                            })
+
+                                        }
+
+                                    />
+
+                                    <div>
+
+                                        <strong>
+                                            Target audience
+                                        </strong>
+
+                                        <p>
+                                            Notify employees in the selected announcement audience.
+                                        </p>
+
+                                        <span className="recipient-current-audience">
+
+                                            Current audience: {
+
+                                                formData.target_audience === "ALL"
+
+                                                ? "All Employees"
+
+                                                : formData.target_audience === "HR"
+
+                                                ? "Human Resource"
+
+                                                : formData.target_audience === "PRODUCTION"
+
+                                                ? "Production"
+
+                                                : formData.target_audience === "ENGINEERING"
+
+                                                ? "Engineering"
+
+                                                : formData.target_audience === "QUALITY"
+
+                                                ? "Quality Control"
+
+                                                : formData.target_audience === "WAREHOUSE"
+
+                                                ? "Warehouse"
+
+                                                : formData.target_audience === "PURCHASING"
+
+                                                ? "Purchasing"
+
+                                                : formData.target_audience === "FINANCE"
+
+                                                ? "Finance"
+
+                                                : formData.target_audience === "IT"
+
+                                                ? "Information Technology"
+
+                                                : formData.target_audience === "GA"
+
+                                                ? "General Affairs"
+
+                                                : formData.target_audience === "MARKETING"
+
+                                                ? "Marketing"
+
+                                                : formData.target_audience
+
+                                            }
+
+                                        </span>
+
+                                    </div>
+
+                                </label>
+
+                                <label
+
+                                        className={
+
+                                            formData.email_recipient_mode === "SELECTED"
+
+                                            ? "recipient-mode-card selected"
+                                            : "recipient-mode-card"
+
+                                        }
+
+                                    >
+                                        <input
+
+                                            type="radio"
+                                            name="email_recipient_mode"
+                                            value="SELECTED"
+                                            checked={
+                                                formData.email_recipient_mode === "SELECTED"
+
+                                            }
+
+                                            onChange={() =>
+
+                                                setFormData({
+
+                                                    ...formData,
+
+                                                    email_recipient_mode: "SELECTED",
+
+                                                })
+
+                                            }
+
+                                        />
+
+                                        <div>
+
+                                            <strong>
+                                                Selected Employees 
+                                            </strong>
+
+                                            <p>
+                                                Choose specific eligible employees to receive the email notification.
+                                            </p>
+
+                                        </div>
+
+                                    </label> 
+
+                                    {
+
+                                        formData.email_recipient_mode === "SELECTED"
+
+                                        &&
+
+                                        <EmployeeRecipientSelector
+
+                                            targetAudience={
+                                                formData.target_audience
+                                            }
+
+                                            selectedEmployees={
+                                                formData.selected_email_recipients || []
+                                            }
+
+                                            setSelectedEmployees={(value) => {
+
+                                                setFormData(
+
+                                                    current => ({
+
+                                                        ...current,
+
+                                                        selected_email_recipients:
+
+                                                        typeof value === "function"
+
+                                                        ? value(
+                                                            current.selected_email_recipients
+                                                        )
+
+                                                        : value,
+
+                                                    })
+
+                                                );
+                                                
+                                            }}
+
+                                        />
+
+                                    }
+
+                            </div>
+                            
+                        )
+
+                    }
 
                 </div>
 

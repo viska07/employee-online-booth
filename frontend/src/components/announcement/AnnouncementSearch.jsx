@@ -40,9 +40,7 @@ function AnnouncementSearch({
 
                 className="announcement-add-button"
 
-                onClick={() =>
-                    setShowModal(true)
-                }
+                onClick={handleAddAnnouncement}
 
             >
 

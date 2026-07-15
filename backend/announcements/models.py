@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.contrib.auth.models import User as DjangoUser
 
 class Announcement(models.Model):
 
@@ -23,6 +23,11 @@ class Announcement(models.Model):
         ("IT", "Information Technology"),
         ("GA", "General Affairs"),
         ("MARKETING", "Marketing"),
+    )
+
+    EMAIL_RECIPIENT_MODE_CHOICE = (
+        ("AUDIENCE", "Target Audience"),
+        ("SELECTED", "Selected Employees"),
     )
 
     title = models.CharField(max_length=255)
@@ -61,6 +66,18 @@ class Announcement(models.Model):
     )
 
     send_email = models.BooleanField(default=False)
+
+    email_recipient_mode = models.CharField(
+        max_length=20,
+        choices=EMAIL_RECIPIENT_MODE_CHOICE,
+        default="AUDIENCE"
+    )
+
+    selected_email_recipients = models.ManyToManyField(
+        DjangoUser,
+        blank=True,
+        related_name="announcement_email_recipients"
+    )
 
     send_whatsapp = models.BooleanField(default=False)
 

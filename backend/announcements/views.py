@@ -14,6 +14,9 @@ from .models import (
     Announcement,
     AnnouncementActivity,
 )
+from django.contrib.auth.models import (
+    User as DjangoUser
+)
 
 def get_available_announcements(request):
 
@@ -372,3 +375,92 @@ class AnnouncementStatisticsAPIView(APIView):
                 total_readers,
 
         })
+    
+class AnnouncementEmailRecipientsAPIView(APIView):
+
+    permission_classes = [
+        IsAuthenticated,
+        IsAdminEmployee,
+    ]
+
+    def get(self, request):
+
+        target_audience = request.query_params.get(
+
+            "target_audience",
+
+            "ALL"
+
+        )
+
+        employees = DjangoUser.objects.filter(
+
+            is_active=True,
+
+            employee_profile__isnull=False
+
+        ).exclude(
+
+            email=""
+
+        ).select_related(
+
+            "employee_profile"
+
+        ).order_by(
+
+            "first_name",
+
+            "username"
+
+        )
+
+        if target_audience != "ALL":
+
+            employees = employees.filter(
+
+                employee_profile__department=(
+                    target_audience
+                )
+
+            )
+
+        data = []
+
+        for employee in employees:
+
+            profile = employee.employee_profile
+
+            name = (
+
+                employee.first_name
+
+                or
+
+                employee.username
+
+            )
+
+            data.append({
+
+                "id": employee.id,
+
+                "name": name,
+
+                "email": employee.email,
+
+                "department":
+                    profile.department,
+
+                "department_display":
+                    profile.get_department_display(),
+
+                "position":
+                    profile.position,
+
+                "position_display":
+                    profile.get_position_display(),
+
+            })
+
+        return Response(data)
