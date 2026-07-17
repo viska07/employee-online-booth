@@ -1,29 +1,66 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+
 import api from "../../services/api";
 
 import "../../styles/admin.css";
 
 function Dashboard() {
 
+    const navigate = useNavigate();
+
     const [data, setData] = useState(null);
+
+    const [loading, setLoading] = useState(true);
+
+    const [error, setError] = useState(false);
+
 
     useEffect(() => {
 
-        api.get("/dashboard/")
-            .then((response) => {
+        async function fetchDashboard() {
 
-                setData(response.data);
+            try {
 
-            })
-            .catch((error) => {
+                setLoading(true);
 
-                console.error(error);
+                setError(false);
 
-            });
+                const response = await api.get(
+                    "/dashboard/"
+                );
+
+                setData(
+                    response.data
+                );
+
+            }
+
+            catch (error) {
+
+                console.error(
+                    "Dashboard Error:",
+                    error.response?.data || error
+                );
+
+                setError(true);
+
+            }
+
+            finally {
+
+                setLoading(false);
+
+            }
+
+        }
+
+        fetchDashboard();
 
     }, []);
 
-    if (!data) {
+
+    if (loading) {
 
         return (
 
@@ -37,69 +74,389 @@ function Dashboard() {
 
     }
 
-    return (
 
-        <div className="dashboard-page">
+    if (error || !data) {
 
-            <div className="admin-page-header">
+        return (
 
-                <h1>Dashboard</h1>
+            <div className="dashboard-error-state">
+
+                <h3>
+
+                    Unable to load dashboard
+
+                </h3>
 
                 <p>
-                    Welcome back, Administrator.
+
+                    Dashboard data could not be loaded.
+                    Please refresh the page and try again.
+
                 </p>
 
             </div>
 
-            <div className="stats-grid">
+        );
 
-                <div className="stat-card">
+    }
 
-                    <div className="stat-card-top">
 
-                        <div>
+    const statistics = (
+        data.statistics || {}
+    );
 
-                            <div className="stat-title">
-                                Total Booths
-                            </div>
 
-                            <div className="stat-value">
-                                {data.total_booths}
-                            </div>
+    return (
 
-                        </div>
+        <div className="dashboard-page">
 
-                        <div className="stat-icon">
-                            🏢
-                        </div>
+            <div className="admin-page-header dashboard-page-header">
 
-                    </div>
+                <div>
+
+                    <h1>
+                        Dashboard
+                    </h1>
+
+                    <p>
+                        Monitor portal activity and information at a glance.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div className="dashboard-statistics">
+
+                <div className="dashboard-stat-card">
+
+                    <span className="dashboard-stat-label">
+
+                        Total Booths
+
+                    </span>
+
+                    <strong className="dashboard-stat-value">
+
+                        {statistics.total_booths ?? 0}
+
+                    </strong>
+
+                    <p>
+
+                        Information booths available
+                        in the portal.
+
+                    </p>
 
                 </div>
 
-                <div className="stat-card">
 
-                    <div className="stat-card-top">
+                <div className="dashboard-stat-card">
+
+                    <span className="dashboard-stat-label">
+
+                        Booth Views
+
+                    </span>
+
+                    <strong className="dashboard-stat-value">
+
+                        {statistics.total_booth_views ?? 0}
+
+                    </strong>
+
+                    <p>
+
+                        Total booth visits recorded
+                        from employees.
+
+                    </p>
+
+                </div>
+
+
+                <div className="dashboard-stat-card">
+
+                    <span className="dashboard-stat-label">
+
+                        Content Views
+
+                    </span>
+
+                    <strong className="dashboard-stat-value">
+
+                        {statistics.total_content_views ?? 0}
+
+                    </strong>
+
+                    <p>
+
+                        Total booth content views
+                        recorded in the portal.
+
+                    </p>
+
+                </div>
+
+
+                <div className="dashboard-stat-card">
+
+                    <span className="dashboard-stat-label">
+
+                        Announcements
+
+                    </span>
+
+                    <strong className="dashboard-stat-value">
+
+                        {statistics.total_announcements ?? 0}
+
+                    </strong>
+
+                    <p>
+
+                        Announcements currently stored
+                        by the system.
+
+                    </p>
+
+                </div>
+
+
+                <div className="dashboard-stat-card">
+
+                    <span className="dashboard-stat-label">
+
+                        Announcement Reads
+
+                    </span>
+
+                    <strong className="dashboard-stat-value">
+
+                        {
+                            statistics
+                                .total_announcement_reads
+                            ?? 0
+                        }
+
+                    </strong>
+
+                    <p>
+
+                        Employee announcement reading
+                        activities recorded.
+
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div className="dashboard-overview-grid">
+
+                <section className="dashboard-overview-card">
+
+                    <div className="dashboard-section-header">
 
                         <div>
 
-                            <div className="stat-title">
-                                Announcements
-                            </div>
+                            <h2>
 
-                            <div className="stat-value">
-                                {data.total_announcements}
-                            </div>
+                                Latest Booths
+
+                            </h2>
+
+                            <p>
+
+                                Recently created information
+                                booths.
+
+                            </p>
 
                         </div>
 
-                        <div className="stat-icon">
-                            📢
-                        </div>
+                        <button
+                            type="button"
+                            className="dashboard-text-action"
+                            onClick={() =>
+                                navigate("/management/booths")
+                            }
+                        >
+
+                            View all
+
+                        </button>
 
                     </div>
 
-                </div>
+
+                    <div className="dashboard-overview-list">
+
+                        {
+
+                            data.latest_booths.length > 0
+
+                            ?
+
+                            data.latest_booths.map(
+
+                                booth => (
+
+                                    <button
+                                        type="button"
+                                        className="dashboard-list-item"
+                                        key={booth.id}
+                                        onClick={() =>
+                                            navigate(
+                                                `/management/booths/${booth.id}/contents`
+                                            )
+                                        }
+                                    >
+
+                                        <span>
+
+                                            {booth.title}
+
+                                        </span>
+
+                                        <span className="dashboard-list-arrow">
+
+                                            →
+
+                                        </span>
+
+                                    </button>
+
+                                )
+
+                            )
+
+                            :
+
+                            <div className="dashboard-list-empty">
+
+                                No booths available.
+
+                            </div>
+
+                        }
+
+                    </div>
+
+                </section>
+
+
+                <section className="dashboard-overview-card">
+
+                    <div className="dashboard-section-header">
+
+                        <div>
+
+                            <h2>
+
+                                Important Announcements
+
+                            </h2>
+
+                            <p>
+
+                                Published announcements marked
+                                as important.
+
+                            </p>
+
+                        </div>
+
+                        <button
+                            type="button"
+                            className="dashboard-text-action"
+                            onClick={() =>
+                                navigate(
+                                    "/management/announcements"
+                                )
+                            }
+                        >
+
+                            View all
+
+                        </button>
+
+                    </div>
+
+
+                    <div className="dashboard-overview-list">
+
+                        {
+
+                            data
+                                .important_announcements
+                                .length > 0
+
+                            ?
+
+                            data
+                                .important_announcements
+                                .map(
+
+                                    announcement => (
+
+                                        <button
+                                            type="button"
+                                            className="dashboard-list-item"
+                                            key={announcement.id}
+                                            onClick={() =>
+                                                navigate(
+                                                    "/management/announcements"
+                                                )
+                                            }
+                                        >
+
+                                            <div className="dashboard-announcement-info">
+
+                                                <span>
+
+                                                    {announcement.title}
+
+                                                </span>
+
+                                                <small>
+
+                                                    {
+                                                        announcement.category
+                                                    }
+
+                                                </small>
+
+                                            </div>
+
+                                            <span className="dashboard-list-arrow">
+
+                                                →
+
+                                            </span>
+
+                                        </button>
+
+                                    )
+
+                                )
+
+                            :
+
+                            <div className="dashboard-list-empty">
+
+                                No important announcements.
+
+                            </div>
+
+                        }
+
+                    </div>
+
+                </section>
 
             </div>
 

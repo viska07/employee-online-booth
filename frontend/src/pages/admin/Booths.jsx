@@ -290,30 +290,33 @@ function Booths() {
 
         <div className="admin-page">
 
-            <div className="admin-page-header">
+            <div className="admin-page-header content-management-header">
 
-                <div>
+                <div className="content-management-header-info">
 
                     <h1>
-
-                        Booth Management
-
+                        Booth Content Management
                     </h1>
 
                     <p>
-
-                        Manage exhibition booths and learning areas.
-
+                        Manage all learning materials inside this booth.
                     </p>
 
                 </div>
 
                 <button
-                    className="primary-button"
-                    onClick={() => setShowModal(true)}
+
+                    type="button"
+
+                    className="primary-button content-add-button"
+
+                    onClick={() =>
+                        setShowModal(true)
+                    }
+
                 >
 
-                    + Add Booth
+                    + Add Content
 
                 </button>
 

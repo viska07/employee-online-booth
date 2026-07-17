@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import api from "../../services/api";
 import BoothHeader from "../../components/boothContent/BoothHeader";
 import BoothInfoCard from "../../components/boothContent/BoothInfoCard";
 import BoothSearch from "../../components/boothContent/BoothSearch";
-import EmptyState from "../../components/boothContent/EmptyState";
 import ContentTable from "../../components/boothContent/ContentTable";
 import ContentModal from "../../components/boothContent/ContentModal";
 import PreviewModal from "../../components/boothContent/PreviewModal";
@@ -100,11 +99,6 @@ function BoothContents() {
 
     async function handleSaveContent() {
 
-        data.append(
-            "source_type",
-            formData.source_type
-        );
-
         if (!formData.title.trim()) {
 
             toast.warning("Title is required.");
@@ -148,6 +142,8 @@ function BoothContents() {
             data.append("description", formData.description);
 
             data.append("type", formData.type);
+
+            data.append("source_type", formData.source_type);
 
             if (!editingContent || !keepCurrentFile) {
 
@@ -437,12 +433,11 @@ function BoothContents() {
         }
 
         setFormData({
-            title:"",
-            description:"",
-            type:"VIDEO",
-            source_type:"UPLOAD",
-            file:null,
-            external_url:"",
+
+            ...formData,
+
+            file:file,
+
         });
 
     }

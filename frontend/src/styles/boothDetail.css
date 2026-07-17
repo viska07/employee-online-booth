@@ -372,21 +372,16 @@
     background:#94A3B8;
 }
 
-
 @media (max-width:1024px){
-
     .booth-detail{
         padding:0 22px;
     }
-
     .detail-hero{
         padding:45px;
     }
-
     .detail-hero h1{
         font-size:40px;
     }
-
     .content-grid{
         grid-template-columns:1fr;
     }
@@ -395,61 +390,48 @@
    MOBILE
 ====================================================== */
 @media (max-width:768px){
-
     .booth-detail{
         margin:25px auto 50px;
         padding:0 15px;
     }
-
     .detail-hero{
         padding:35px 25px;
         border-radius:22px;
     }
-
     .detail-hero h1{
         font-size:30px;
     }
-
     .detail-hero p{
         font-size:15px;
     }
-
     .resource-thumbnail{
         border-radius:18px;
     }
-
     .resources-header h2{
         font-size:28px;
     }
-
     .resources-header p{
         font-size:15px;
     }
-
     .content-card{
         padding:22px;
     }
-
     .content-header{
         flex-direction:column;
         align-items:flex-start;
     }
-
     .content-icon{
         width:58px;
         height:58px;
         font-size:28px;
     }
-
     .content-info h3{
         font-size:20px;
     }
-
     .content-meta{
         flex-direction:column;
         gap:16px;
     }
-
     .meta-left,
     .meta-right{
         width:100%;
@@ -459,27 +441,21 @@
    SMALL MOBILE
 ====================================================== */
 @media (max-width:480px){
-
     .detail-hero{
         padding:28px 20px;
     }
-
     .detail-hero h1{
         font-size:26px;
     }
-
     .resources-header h2{
         font-size:24px;
     }
-
     .content-card{
         padding:18px;
         border-radius:18px;
     }
-
     .resource-button{
         padding:14px;
         font-size:14px;
     }
-
 }

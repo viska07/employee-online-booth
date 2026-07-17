@@ -1,5 +1,4 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-
 import Home from "./pages/Home";
 import BoothDetail from "./pages/BoothDetail";
 import Exhibitions from "./pages/Exhibitions";
@@ -9,12 +8,9 @@ import MyActivity from "./pages/MyActivity";
 import Announcements from "./pages/Announcements";
 import AnnouncementDetail from "./pages/AnnouncementDetail";
 import Forbidden from "./pages/Forbidden";
-
 import ProtectedRoute from "./routes/ProtectedRoute";
 import AdminRoute from "./routes/AdminRoute";
-
 import AdminLayout from "./layouts/AdminLayout";
-
 import Dashboard from "./pages/admin/Dashboard";
 import Booths from "./pages/admin/Booths";
 import BoothContents from "./pages/admin/BoothContents";
@@ -50,8 +46,6 @@ function App() {
                     path="/403"
                     element={<Forbidden />}
                 />
-
-
 
                 {/* ===========================
                     EMPLOYEE ROUTES
@@ -110,8 +104,6 @@ function App() {
                         </ProtectedRoute>
                     }
                 />
-
-
 
                 {/* ===========================
                     ADMIN ROUTES

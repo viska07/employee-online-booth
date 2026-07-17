@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+
 :root{
   --primary-blue:#1694D7;
   --primary-blue-hover:#0E7EB8;
@@ -30,8 +32,15 @@
 }
 
 body{
-  font-family: Arial, sans-serif;
+  font-family:
+    "Inter",
+    Arial,
+    sans-serif;
   background:#f8fafc;
+  color:#334155;
+  font-synthesis:none;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
 }
 
 .navbar{

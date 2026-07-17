@@ -2,7 +2,6 @@
    ANNOUNCEMENT DESIGN SYSTEM
 ====================================================== */
 :root{
-
     --primary:#1694D7;
     --primary-dark:#0E7EB8;
     --bg:#F6F8FB;
@@ -270,29 +269,23 @@
     .announcements-page{
         padding:0 18px;
     }
-
     .announcement-header{
         padding:40px 28px;
     }
-
     .announcement-header h1{
         font-size:34px;
     }
-
     .announcement-header p{
         font-size:16px;
     }
-
     .announcement-list{
         grid-template-columns:1fr;
     }
-
     .announcement-footer{
         flex-direction:column;
         align-items:flex-start;
         gap:18px;
     }
-
     .announcement-footer button{
         width:100%;
         justify-content:center;
@@ -424,23 +417,18 @@
    DETAIL RESPONSIVE
 ====================================================== */
 @media (max-width:768px){
-
     .announcement-detail-page{
         padding:0 18px;
     }
-
     .announcement-detail-card{
         padding:28px;
     }
-
     .detail-meta{
         flex-direction:column;
     }
-
     .meta-box{
         width:100%;
     }
-
     .download-button{
         width:100%;
         justify-content:center;
@@ -451,7 +439,6 @@
     max-width:1400px;
     margin:80px auto 100px;
     padding:0 40px;
-
 }
 
 .announcement-grid{
