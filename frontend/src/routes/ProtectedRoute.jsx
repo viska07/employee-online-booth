@@ -3,7 +3,11 @@ import { useAuth } from "../context/AuthContext";
 
 function ProtectedRoute({ children }) {
 
-    const { user, loading } = useAuth();
+    const {
+        user,
+        isGuest,
+        loading,
+    } = useAuth();
 
     if (loading) {
 
@@ -11,7 +15,7 @@ function ProtectedRoute({ children }) {
 
     }
 
-    if (!user) {
+    if (!user && !isGuest) {
 
         return <Navigate to="/login" replace />;
 

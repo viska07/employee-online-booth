@@ -70,6 +70,8 @@ function ContentTable({
 
                         <th>Title</th>
 
+                        <th>Audience</th>
+
                         <th>Type</th>
 
                         <th>File</th>
@@ -101,6 +103,24 @@ function ContentTable({
                                     <td>
 
                                         {content.title}
+
+                                    </td>
+
+                                    <td>
+
+                                        <span
+                                            className={`audience-badge ${content.target_audience.toLowerCase()}`}
+                                        >
+
+                                            {
+                                                content.target_audience === "PUBLIC"
+                                                    ? "🌍 Public"
+                                                    : content.target_audience === "EMPLOYEE"
+                                                    ? "👥 Employee"
+                                                    : `🏢 ${content.target_audience}`
+                                            }
+
+                                        </span>
 
                                     </td>
 
@@ -292,7 +312,7 @@ function ContentTable({
 
                                 <td
 
-                                    colSpan="5"
+                                    colSpan="9"
 
                                     style={{
 

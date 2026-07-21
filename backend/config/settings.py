@@ -180,3 +180,5 @@ SIMPLE_JWT = {
     "AUTH_HEADER_TYPES": ("Bearer",),
 
 }
+
+FRONTEND_URL = "http://localhost:5173"

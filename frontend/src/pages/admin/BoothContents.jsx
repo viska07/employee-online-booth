@@ -31,6 +31,7 @@ function BoothContents() {
         description: "",
         type: "VIDEO",
         source_type: "UPLOAD",
+        target_audience: "EMPLOYEE",
         file: null,
         external_url: "",
     });
@@ -145,6 +146,8 @@ function BoothContents() {
 
             data.append("source_type", formData.source_type);
 
+            data.append("target_audience", formData.target_audience);
+
             if (!editingContent || !keepCurrentFile) {
 
                 if(
@@ -233,6 +236,7 @@ function BoothContents() {
                 description:"",
                 type:"VIDEO",
                 source_type:"UPLOAD",
+                target_audience:"EMPLOYEE",
                 file:null,
                 external_url:"",
             });
@@ -274,6 +278,8 @@ function BoothContents() {
                 content.source_type ||
 
                 "UPLOAD",
+
+            target_audience:content.target_audience,
 
             external_url:
 
@@ -503,6 +509,7 @@ function BoothContents() {
                         description:"",
                         type:"VIDEO",
                         source_type:"UPLOAD",
+                        target_audience:"EMPLOYEE",
                         file:null,
                         external_url:"",
                     });

@@ -12,7 +12,8 @@ class Announcement(models.Model):
     )
     
     AUDIENCE_CHOICES = (
-        ("ALL", "All Employees"),
+        ("PUBLIC", "Public"),
+        ("EMPLOYEE", "All Employees"),
         ("HR", "Human Resource"),
         ("PRODUCTION", "Production"),
         ("ENGINEERING", "Engineering"),
@@ -43,7 +44,7 @@ class Announcement(models.Model):
     target_audience = models.CharField(
         max_length=50,
         choices=AUDIENCE_CHOICES,
-        default='ALL'
+        default='EMPLOYEE'
     )
 
     attachment = models.FileField(

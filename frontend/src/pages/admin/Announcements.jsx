@@ -251,6 +251,28 @@ function Announcements() {
 
     }
 
+    async function handleResendEmail(id) {
+
+        try {
+
+            await api.post(
+                `/announcements/management/${id}/resend-email/`
+            );
+
+            alert("Email sent successfully.");
+
+        }
+
+        catch(error){
+
+            console.error(error);
+
+            alert("Failed to send email.");
+
+        }
+
+    }
+
     function handleAddAnnouncement(){
 
         setEditingAnnouncement(null);
@@ -568,22 +590,18 @@ function Announcements() {
                 :
 
                 <AnnouncementTable
-
+                
                     announcements={filteredAnnouncements}
 
                     handleEdit={handleEditAnnouncement}
 
-                    setDeleteAnnouncement={
-                        setDeleteAnnouncement
-                    }
+                    setDeleteAnnouncement={setDeleteAnnouncement}
 
-                    setPreviewAnnouncement={
-                        setPreviewAnnouncement
-                    }
+                    setPreviewAnnouncement={setPreviewAnnouncement}
 
-                    handleReaders={
-                        handleReaders
-                    }
+                    handleReaders={handleReaders}
+
+                    handleResendEmail={handleResendEmail}
 
                 />
 
@@ -601,11 +619,7 @@ function Announcements() {
 
                 setFormData={setFormData}
 
-                handleSaveAnnouncement={
-
-                    handleSaveAnnouncement
-
-                }
+                handleSaveAnnouncement={handleSaveAnnouncement}
 
                 saving={saving}
 
@@ -613,39 +627,19 @@ function Announcements() {
 
             <AnnouncementPreview
 
-                previewAnnouncement={
+                previewAnnouncement={previewAnnouncement}
 
-                    previewAnnouncement
-
-                }
-
-                setPreviewAnnouncement={
-
-                    setPreviewAnnouncement
-
-                }
+                setPreviewAnnouncement={setPreviewAnnouncement}
 
             />
 
             <DeleteAnnouncementModal
 
-                deleteAnnouncement={
+                deleteAnnouncement={deleteAnnouncement}
 
-                    deleteAnnouncement
+                setDeleteAnnouncement={setDeleteAnnouncement}
 
-                }
-
-                setDeleteAnnouncement={
-
-                    setDeleteAnnouncement
-
-                }
-
-                handleDeleteAnnouncement={
-
-                    handleDeleteAnnouncement
-
-                }
+                handleDeleteAnnouncement={handleDeleteAnnouncement}
 
             />
 

@@ -14,8 +14,9 @@ function Navbar() {
   } = useLanguage();
 
   const {
-    user,
-    logout,
+      user,
+      isGuest,
+      logout,
   } = useAuth();
 
   const navigate = useNavigate();
@@ -124,7 +125,9 @@ function Navbar() {
 
             <span>
 
-              {user?.username}
+                {isGuest
+                    ? "Guest"
+                    : user?.username}
 
             </span>
 
@@ -140,24 +143,38 @@ function Navbar() {
 
                   <strong>
 
-                    {user?.username}
+                      {isGuest
+                          ? "Guest User"
+                          : user?.username}
 
                   </strong>
 
                   <small>
 
-                    {user?.email}
+                      {isGuest
+                          ? "Public Access"
+                          : user?.email}
 
                   </small>
 
                 </div>
 
-                <Link
-                    to="/my-activity"
-                    className="dropdown-link"
-                >
-                    📊 {language.navbar.myActivity}
-                </Link>
+                {
+
+                    !isGuest && (
+
+                        <Link
+                            to="/my-activity"
+                            className="dropdown-link"
+                        >
+
+                            📊 {language.navbar.myActivity}
+
+                        </Link>
+
+                    )
+
+                }
 
                 <button
                   className="logout-item"
@@ -166,7 +183,15 @@ function Navbar() {
 
                   <FaSignOutAlt />
 
-                  {language.navbar.logout}
+                  {
+
+                      isGuest
+
+                          ? "Exit Guest"
+
+                          : language.navbar.logout
+
+                  }
 
                 </button>
 

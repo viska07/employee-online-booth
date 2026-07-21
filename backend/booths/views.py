@@ -2,7 +2,10 @@ from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import (
+    IsAuthenticated,
+    AllowAny,
+)
 from announcements.models import Announcement
 from .models import (
     Booth,
@@ -12,8 +15,56 @@ from .models import (
 from .serializers import BoothSerializer
 from .activity_serializers import BoothActivitySerializer
 from .content_serializers import BoothContentSerializer
+from .access import filter_booth_contents
+from django.db.models import Q
+
+def get_available_contents(request, booth_id):
+
+    contents = BoothContent.objects.filter(
+        booth_id=booth_id
+    )
+
+    # ======================
+    # Guest
+    # ======================
+
+    if not request.user.is_authenticated:
+
+        return contents.filter(
+            target_audience="PUBLIC"
+        )
+
+    # ======================
+    # Admin
+    # ======================
+
+    if request.user.employee_profile.role == "ADMIN":
+
+        return contents
+
+    # ======================
+    # Employee
+    # ======================
+
+    department = request.user.employee_profile.department
+
+    return contents.filter(
+
+        Q(target_audience="PUBLIC")
+
+        |
+
+        Q(target_audience="EMPLOYEE")
+
+        |
+
+        Q(target_audience=department)
+
+    )
 
 class BoothListAPIView(APIView):
+
+    permission_classes = [AllowAny]
 
     def get(self, request):
 
@@ -27,7 +78,6 @@ class BoothListAPIView(APIView):
         )
 
         return Response(serializer.data)
-
 
 class BoothActivityCreateAPIView(APIView):
 
@@ -115,10 +165,17 @@ class BoothViewIncrementAPIView(APIView):
 
 class BoothContentListAPIView(APIView):
 
+    permission_classes = [
+        AllowAny
+    ]
+
     def get(self, request, booth_id):
 
-        contents = BoothContent.objects.filter(
-            booth_id=booth_id
+        contents = filter_booth_contents(
+            request,
+            BoothContent.objects.filter(
+                booth_id=booth_id
+            )
         )
 
         serializer = BoothContentSerializer(

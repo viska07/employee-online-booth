@@ -9,7 +9,10 @@ function Login() {
 
     const navigate = useNavigate();
 
-    const { login } = useAuth();
+    const {
+        login,
+        guestLogin,
+    } = useAuth();
 
     const [username, setUsername] = useState("");
 
@@ -73,6 +76,14 @@ function Login() {
             setLoading(false);
 
         }
+
+    };
+
+    const handleGuestLogin = () => {
+
+        guestLogin();
+
+        navigate("/");
 
     };
 
@@ -312,6 +323,18 @@ function Login() {
                                 Create Account
 
                             </Link>
+
+                            <div className="guest-divider">
+                                <span>or</span>
+                            </div>
+
+                            <button
+                                type="button"
+                                className="guest-button"
+                                onClick={handleGuestLogin}
+                            >
+                                Continue as Guest
+                            </button>
 
                         </div>
 

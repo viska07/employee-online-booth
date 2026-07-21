@@ -6,12 +6,19 @@ const AuthContext = createContext();
 export function AuthProvider({ children }) {
 
     const [user, setUser] = useState(null);
-
+    const [isGuest, setIsGuest] = useState(false);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
 
         const token = localStorage.getItem("access");
+        const guest = localStorage.getItem("guest");
+
+        if (guest === "true") {
+            setIsGuest(true);
+            setLoading(false);
+            return;
+        }
 
         if (token) {
 
@@ -48,6 +55,10 @@ export function AuthProvider({ children }) {
 
     const login = (userData, token) => {
 
+        localStorage.removeItem("guest");
+
+        setIsGuest(false);
+
         localStorage.setItem("access", token);
 
         api.defaults.headers.common[
@@ -58,13 +69,30 @@ export function AuthProvider({ children }) {
 
     };
 
+    const guestLogin = () => {
+
+        localStorage.setItem(
+            "guest",
+            "true"
+        );
+
+        setIsGuest(true);
+
+        setUser(null);
+
+    };
+
     const logout = () => {
 
         localStorage.removeItem("access");
 
+        localStorage.removeItem("guest");
+        
         delete api.defaults.headers.common.Authorization;
 
         setUser(null);
+
+        setIsGuest(false);
 
     };
 
@@ -73,7 +101,9 @@ export function AuthProvider({ children }) {
         <AuthContext.Provider
             value={{
                 user,
+                isGuest,
                 login,
+                guestLogin,
                 logout,
                 loading,
             }}

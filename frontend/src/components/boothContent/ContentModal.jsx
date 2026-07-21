@@ -132,6 +132,52 @@ function ContentModal({
 
                     <label>
 
+                        Target Audience
+
+                    </label>
+
+                    <select
+                        value={formData.target_audience}
+                        onChange={(e)=>
+                            setFormData({
+                                ...formData,
+                                target_audience: e.target.value,
+                            })
+                        }
+                    >
+
+                        <option value="PUBLIC">
+                            Public
+                        </option>
+
+                        <option value="EMPLOYEE">
+                            Employee
+                        </option>
+
+                        <option value="HR">
+                            HR
+                        </option>
+
+                        <option value="QA">
+                            QA
+                        </option>
+
+                        <option value="PRODUCTION">
+                            Production
+                        </option>
+
+                        <option value="ENGINEERING">
+                            Engineering
+                        </option>
+
+                    </select>
+
+                </div>
+
+                <div className="form-group">
+
+                    <label>
+
                         Type
 
                     </label>

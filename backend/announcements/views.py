@@ -14,6 +14,8 @@ from .models import (
     Announcement,
     AnnouncementActivity,
 )
+from .email_service import send_announcement_email
+from rest_framework.permissions import AllowAny
 from django.contrib.auth.models import (
     User as DjangoUser
 )
@@ -23,59 +25,41 @@ def get_available_announcements(request):
     now = timezone.now()
 
     announcements = Announcement.objects.filter(
-
         is_published=True,
-
-        start_date__lte=now
-
+        start_date__lte=now,
     ).filter(
-
         Q(end_date__isnull=True)
-
         |
-
         Q(end_date__gte=now)
-
     )
 
-    try:
-
-        department = (
-            request.user
-            .employee_profile
-            .department
+    # Guest
+    if not request.user.is_authenticated:
+        return announcements.filter(
+            target_audience="PUBLIC"
         )
 
-    except:
+    # Admin
+    if request.user.is_staff:
+        return announcements
 
+    # Employee
+    try:
+        department = request.user.employee_profile.department
+    except:
         department = None
 
+    filters = Q(target_audience="PUBLIC") | Q(target_audience="EMPLOYEE")
+
     if department:
+        filters |= Q(target_audience=department)
 
-        announcements = announcements.filter(
-
-            Q(target_audience="ALL")
-
-            |
-
-            Q(target_audience=department)
-
-        )
-
-    else:
-
-        announcements = announcements.filter(
-
-            target_audience="ALL"
-
-        )
-
-    return announcements
+    return announcements.filter(filters)
 
 class AnnouncementListAPIView(APIView):
 
     permission_classes = [
-        IsAuthenticated
+        AllowAny
     ]
 
     def get(self, request):
@@ -125,7 +109,7 @@ class AnnouncementManagementListAPIView(APIView):
 class AnnouncementDetailAPIView(APIView):
 
     permission_classes = [
-        IsAuthenticated
+        AllowAny
     ]
 
     def get(self, request, pk):
@@ -165,10 +149,14 @@ class AnnouncementManagementAPIView(APIView):
 
         if serializer.is_valid():
 
-            serializer.save()
+            announcement = serializer.save()
+
+            send_announcement_email(announcement)
 
             return Response(
-                serializer.data,
+                AnnouncementSerializer(
+                    announcement
+                ).data,
                 status=status.HTTP_201_CREATED
             )
 
@@ -192,9 +180,15 @@ class AnnouncementManagementAPIView(APIView):
 
         if serializer.is_valid():
 
-            serializer.save()
+            announcement = serializer.save()
 
-            return Response(serializer.data)
+            send_announcement_email(announcement)
+
+            return Response(
+                AnnouncementSerializer(
+                    announcement
+                ).data
+            )
 
         return Response(
             serializer.errors,
@@ -389,7 +383,7 @@ class AnnouncementEmailRecipientsAPIView(APIView):
 
             "target_audience",
 
-            "ALL"
+            "EMPLOYEE"
 
         )
 
@@ -415,7 +409,7 @@ class AnnouncementEmailRecipientsAPIView(APIView):
 
         )
 
-        if target_audience != "ALL":
+        if target_audience not in ["PUBLIC", "EMPLOYEE"]:
 
             employees = employees.filter(
 
@@ -464,3 +458,30 @@ class AnnouncementEmailRecipientsAPIView(APIView):
             })
 
         return Response(data)
+    
+from rest_framework.decorators import permission_classes
+
+class AnnouncementResendEmailAPIView(APIView):
+
+    permission_classes = [
+        IsAuthenticated,
+        IsAdminEmployee,
+    ]
+
+    def post(self, request, pk):
+
+        announcement = get_object_or_404(
+            Announcement,
+            pk=pk
+        )
+
+        send_announcement_email(
+            announcement
+        )
+
+        return Response(
+            {
+                "message": "Email notification sent successfully."
+            },
+            status=status.HTTP_200_OK
+        )

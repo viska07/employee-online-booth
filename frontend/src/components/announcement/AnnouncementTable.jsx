@@ -12,6 +12,8 @@ function AnnouncementTable({
 
     handleReaders,
 
+    handleResendEmail,
+
 }){
 
     return(
@@ -150,63 +152,47 @@ function AnnouncementTable({
                                     <td>
 
                                         <button
-
                                             className="table-preview-button"
-
-                                            onClick={()=>
-
+                                            onClick={() =>
                                                 setPreviewAnnouncement(
-
                                                     announcement
-
                                                 )
-
                                             }
-
                                         >
-
                                             👁 Preview
-
                                         </button>
 
                                         <button
-
                                             className="table-edit-button"
-
-                                            onClick={()=>
-
+                                            onClick={() =>
                                                 handleEdit(
-
                                                     announcement
-
                                                 )
-
                                             }
-
                                         >
-
                                             ✏ Edit
-
                                         </button>
 
                                         <button
-
-                                            className="table-delete-button"
-
-                                            onClick={()=>
-
-                                                setDeleteAnnouncement(
-
-                                                    announcement
-
+                                            className="table-email-button"
+                                            onClick={() =>
+                                                handleResendEmail(
+                                                    announcement.id
                                                 )
-
                                             }
-
                                         >
+                                            📧 Resend Email
+                                        </button>
 
+                                        <button
+                                            className="table-delete-button"
+                                            onClick={() =>
+                                                setDeleteAnnouncement(
+                                                    announcement
+                                                )
+                                            }
+                                        >
                                             🗑 Delete
-
                                         </button>
 
                                     </td>

@@ -94,6 +94,21 @@ class BoothContent(models.Model):
         ('LINK', 'External Link'),
     )
 
+    AUDIENCE_CHOICES = (
+        ("PUBLIC", "Public"),
+        ("EMPLOYEE", "All Employees"),
+        ("HR", "Human Resource"),
+        ("PRODUCTION", "Production"),
+        ("ENGINEERING", "Engineering"),
+        ("QUALITY", "Quality Control"),
+        ("WAREHOUSE", "Warehouse"),
+        ("PURCHASING", "Purchasing"),
+        ("FINANCE", "Finance"),
+        ("IT", "Information Technology"),
+        ("GA", "General Affairs"),
+        ("MARKETING", "Marketing"),
+    )
+
     booth = models.ForeignKey(
         Booth,
         on_delete=models.CASCADE,
@@ -118,6 +133,12 @@ class BoothContent(models.Model):
         max_length=20,
         choices=SOURCE_TYPES,
         default="UPLOAD"
+    )
+
+    target_audience = models.CharField(
+        max_length=30,
+        choices=AUDIENCE_CHOICES,
+        default="EMPLOYEE"
     )
 
     file = models.FileField(

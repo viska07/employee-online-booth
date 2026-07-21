@@ -611,6 +611,46 @@ body {
     font-family: inherit;
     cursor: pointer;
 }
+
+.table-email-button{
+    background:#0ea5e9;
+    color:#fff;
+    border:none;
+    padding:8px 12px;
+    border-radius:6px;
+    cursor:pointer;
+    margin:8px;
+}
+
+.table-email-button:hover{
+    background:#0284c7;
+}
+
+.audience-badge{
+    display:inline-block;
+    padding:4px 10px;
+    border-radius:999px;
+    font-size:13px;
+    font-weight:600;
+}
+
+.audience-badge.public{
+    background:#E8F5E9;
+    color:#2E7D32;
+}
+
+.audience-badge.employee{
+    background:#E3F2FD;
+    color:#1565C0;
+}
+
+.audience-badge.hr,
+.audience-badge.qa,
+.audience-badge.production,
+.audience-badge.engineering{
+    background:#FFF3E0;
+    color:#EF6C00;
+}
 /* ==========================================================
    BADGES
 ========================================================== */
@@ -1671,6 +1711,26 @@ body {
     flex-shrink: 0;
     padding: 10px 18px;
     margin-top: 2px;
+    white-space: nowrap;
+}
+
+.admin-page-header{
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+
+    width: 100%;
+    margin-bottom: 24px;
+    gap: 20px;
+}
+
+.admin-page-header > div{
+    flex: 1;
+}
+
+.admin-page-header .primary-button{
+    margin-left: auto;
+    align-self: flex-start;
     white-space: nowrap;
 }
 /* ==========================================================
