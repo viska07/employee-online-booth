@@ -11,25 +11,6 @@ from .admin_serializers import AdminBoothSerializer
 from .models import BoothContent
 from .content_serializers import BoothContentSerializer
 
-
-class AdminBoothContentAPIView(APIView):
-
-    permission_classes = [IsAdminUser]
-
-    def get(self, request, booth_id):
-
-        contents = BoothContent.objects.filter(
-            booth_id=booth_id
-        ).order_by("-id")
-
-        serializer = BoothContentSerializer(
-            contents,
-            many=True
-        )
-
-        return Response(serializer.data)
-
-
 class AdminBoothListCreateAPIView(APIView):
 
     permission_classes = [IsAdminUser]
@@ -290,7 +271,7 @@ class AdminBoothContentDetailAPIView(APIView):
 
             if uploaded_file:
 
-                if content_file:
+                if content.file:
 
                     if os.path.isfile(content.file.path):
 

@@ -1,5 +1,4 @@
 from django.db.models import Count
-
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
@@ -51,7 +50,13 @@ class DashboardAPIView(APIView):
         total_announcement_reads = (
             AnnouncementActivity.objects.filter(
                 action="READ"
-            ).count()
+            )
+            .values(
+                "announcement",
+                "user_email",
+            )
+            .distinct()
+            .count()
         )
 
         latest_booths = (

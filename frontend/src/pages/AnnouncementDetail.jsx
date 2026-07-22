@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useLanguage } from "../language/LanguageContext";
 import { useNavigate, useParams } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 import Navbar from "../components/Navbar";
 import api from "../services/api";
 import "../styles/announcement.css";
@@ -12,6 +13,7 @@ function AnnouncementDetail() {
     const [announcement, setAnnouncement] = useState(null);
     const [loading, setLoading] = useState(true);
     const { language } = useLanguage();
+    const { isGuest } = useAuth();
 
     useEffect(() => {
 
@@ -29,33 +31,37 @@ function AnnouncementDetail() {
                     response.data
                 );
 
-                try {
+                if (!isGuest) {
 
-                    await api.post(
+                    try {
 
-                        "/announcements/activity/",
+                        await api.post(
 
-                        {
+                            "/announcements/activity/",
 
-                            announcement: Number(id),
+                            {
 
-                            action: "READ",
+                                announcement: Number(id),
 
-                        }
+                                action: "READ",
 
-                    );
+                            }
 
-                }
+                        );
 
-                catch (activityError) {
+                    }
 
-                    console.error(
+                    catch (activityError) {
 
-                        "Read Activity Error:",
+                        console.error(
 
-                        activityError.response?.data
+                            "Read Activity Error:",
 
-                    );
+                            activityError.response?.data
+
+                        );
+
+                    }
 
                 }
 

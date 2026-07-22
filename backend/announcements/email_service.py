@@ -27,7 +27,10 @@ def send_announcement_email(announcement):
             employee_profile__isnull=False
         ).exclude(email="")
 
-        if announcement.target_audience != "ALL":
+        if announcement.target_audience not in [
+            "PUBLIC",
+            "EMPLOYEE",
+        ]:
             recipients = recipients.filter(
                 employee_profile__department=announcement.target_audience
             )

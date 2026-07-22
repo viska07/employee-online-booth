@@ -651,6 +651,28 @@ body {
     background:#FFF3E0;
     color:#EF6C00;
 }
+
+.guest-button {
+    margin-top: 10px;
+    padding: 10px 22px;
+    border: 1px solid #2d9cdb;
+    border-radius: 8px;
+    background-color: #ffffff;
+    color: #2d9cdb;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.guest-button:hover {
+    background-color: #2d9cdb;
+    color: #ffffff;
+}
+
+.guest-button:active {
+    transform: scale(0.98);
+}
 /* ==========================================================
    BADGES
 ========================================================== */

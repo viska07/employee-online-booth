@@ -40,7 +40,7 @@ class AnnouncementSerializer(
             (
                 instance.target_audience
                 if instance
-                else "ALL"
+                else "EMPLOYEE"
             )
 
         )
@@ -110,7 +110,10 @@ class AnnouncementSerializer(
 
                 })
 
-            if target_audience != "ALL":
+            if target_audience not in [
+                "PUBLIC",
+                "EMPLOYEE",
+            ]:
 
                 invalid_recipients = [
 
