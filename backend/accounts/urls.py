@@ -1,4 +1,8 @@
 from django.urls import path
+from .admin_views import (
+    EmployeeListAPIView,
+    EmployeeCreateAPIView,
+)
 from .views import (
     LoginView,
     RegisterView,
@@ -30,6 +34,12 @@ urlpatterns = [
         "register/options/",
         RegisterOptionsAPIView.as_view(),
         name="register-options",
+    ),
+
+    path(
+        "admin/employees/",
+        EmployeeListAPIView.as_view(),
+        name="admin-employees",
     ),
 
 ]
