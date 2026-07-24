@@ -231,3 +231,96 @@ class EmployeeCreateSerializer(serializers.Serializer):
         )
 
         return user
+
+class EmployeeUpdateSerializer(serializers.Serializer):
+
+    full_name = serializers.CharField(
+        max_length=150
+    )
+
+    username = serializers.CharField(
+        max_length=150
+    )
+
+    email = serializers.EmailField()
+
+    department = serializers.ChoiceField(
+        choices=EmployeeProfile.DEPARTMENT_CHOICES
+    )
+
+    position = serializers.ChoiceField(
+        choices=EmployeeProfile.POSITION_CHOICES
+    )
+
+    is_staff = serializers.BooleanField()
+
+    def update(self, instance, validated_data):
+
+        instance.first_name = validated_data["full_name"]
+        instance.username = validated_data["username"]
+        instance.email = validated_data["email"]
+        instance.is_staff = validated_data["is_staff"]
+        instance.save()
+
+        profile = instance.employee_profile
+        profile.department = validated_data["department"]
+        profile.position = validated_data["position"]
+        profile.save()
+
+        return instance
+
+    def validate_username(self, value):
+
+        user = self.instance
+
+        if User.objects.exclude(
+            id=user.id
+        ).filter(
+            username=value
+        ).exists():
+
+            raise serializers.ValidationError(
+                "Username sudah digunakan"
+            )
+
+        return value
+
+    def validate_email(self, value):
+
+        user = self.instance
+
+        if User.objects.exclude(
+            id=user.id
+        ).filter(
+            email=value
+        ).exists():
+
+            raise serializers.ValidationError(
+                "Email sudah digunakan"
+            )
+
+        return value
+
+class EmployeeResetPasswordSerializer(serializers.Serializer):
+
+    password =  serializers.CharField(
+        write_only=True,
+        min_length=8
+    )
+
+    confirm_password = serializers.CharField(
+        write_only=True
+    )
+
+    def validate(self, attrs):
+
+        if attrs["password"] != attrs["confirm_password"]:
+
+            raise serializers.ValidationError({
+
+                "confirm_password":
+                "Password dan confirm Password tidak sama"
+
+            })
+
+        return attrs

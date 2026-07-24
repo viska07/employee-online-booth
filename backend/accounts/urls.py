@@ -1,7 +1,10 @@
 from django.urls import path
 from .admin_views import (
     EmployeeListAPIView,
+    EmployeeDetailAPIView,
     EmployeeCreateAPIView,
+    EmployeeResetPasswordAPIView,
+    EmployeeActiveAPIView,
 )
 from .views import (
     LoginView,
@@ -40,6 +43,24 @@ urlpatterns = [
         "admin/employees/",
         EmployeeListAPIView.as_view(),
         name="admin-employees",
+    ),
+
+    path(
+        "admin/employees/<int:pk>/",
+        EmployeeDetailAPIView.as_view(),
+        name="admin-employee-detail",
+    ),
+
+    path(
+        "admin/employees/<int:pk>/reset-password/",
+        EmployeeResetPasswordAPIView.as_view(),
+        name="admin-reset-password",
+    ),
+
+    path(
+        "admin/employees/<int:pk>/activate/",
+        EmployeeActiveAPIView.as_view(),
+        name="admin-employee-activate",
     ),
 
 ]
