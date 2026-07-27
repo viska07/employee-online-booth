@@ -4,6 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import "../styles/boothDetail.css";
 import api from "../services/api";
+import PreviewModal from "../components/boothContent/PreviewModal";
 
 function BoothDetail() {
   const navigate = useNavigate();
@@ -13,6 +14,7 @@ function BoothDetail() {
   const [viewedContents, setViewedContents] = useState([]);
   const { language } = useLanguage();
   const [previewImage, setPreviewImage] = useState(false);
+  const [previewContent, setPreviewContent] = useState(null);
   const getContentIcon = (type) => {
 
     switch(type){
@@ -88,13 +90,23 @@ function BoothDetail() {
 
     }
 
-    window.open(
+    const extension = content.file
+        ?.split(".")
+        .pop()
+        ?.toLowerCase();
 
-      `http://127.0.0.1:8000${content.file}`,
-
-      "_blank"
-
-    );
+    if (
+        ["mp4", "mov", "avi", "webm", "png", "jpg", "jpeg", "gif", "webp"].includes(extension)
+    ) {
+        setPreviewContent(content);
+    } else if (content.source_type === "LINK") {
+        window.open(content.external_url, "_blank");
+    } else {
+        window.open(
+            `http://127.0.0.1:8000${content.file}`,
+            "_blank"
+        );
+    }
 
   };
 
@@ -389,6 +401,11 @@ function BoothDetail() {
     </div>
 
     )}
+
+    <PreviewModal
+        previewContent={previewContent}
+        setPreviewContent={setPreviewContent}
+    />
 
   </>
 );

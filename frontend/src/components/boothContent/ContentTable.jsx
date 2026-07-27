@@ -1,4 +1,5 @@
 import EmptyState from "./EmptyState";
+import ContentActionMenu from "./ContentActionMenu";
 
 function getFileName(content){
 
@@ -75,8 +76,6 @@ function ContentTable({
                         <th>Type</th>
 
                         <th>File</th>
-
-                        <th>Size</th>
 
                         <th>Views</th>
 
@@ -228,12 +227,6 @@ function ContentTable({
 
                                     <td>
 
-                                        {getFileSize(content)}
-
-                                    </td>
-
-                                    <td>
-
                                         👁 {content.views ?? 0}
 
                                     </td>
@@ -254,49 +247,19 @@ function ContentTable({
 
                                     <td className="content-action-cell">
 
-                                        <div className="content-action-buttons">
+                                        <ContentActionMenu
 
-                                            <button
-                                                type="button"
-                                                className="table-preview-button"
-                                                onClick={() =>
-                                                    setPreviewContent(content)
-                                                }
-                                            >
-                                                👁 Preview
-                                            </button>
+                                            content={content}
 
-                                            <button
-                                                type="button"
-                                                className="table-edit-button"
-                                                onClick={() =>
-                                                    handleEditContent(content)
-                                                }
-                                            >
-                                                ➡ Edit
-                                            </button>
+                                            setPreviewContent={setPreviewContent}
 
-                                            <button
-                                                type="button"
-                                                className="table-view-button"
-                                                onClick={() =>
-                                                    handleViewers(content)
-                                                }
-                                            >
-                                                👥 Viewers
-                                            </button>
+                                            handleEditContent={handleEditContent}
 
-                                            <button
-                                                type="button"
-                                                className="table-delete-button"
-                                                onClick={() =>
-                                                    setDeleteContent(content)
-                                                }
-                                            >
-                                                🗑 Delete
-                                            </button>
+                                            handleViewers={handleViewers}
 
-                                        </div>
+                                            setDeleteContent={setDeleteContent}
+
+                                        />
 
                                     </td>
 
@@ -312,7 +275,7 @@ function ContentTable({
 
                                 <td
 
-                                    colSpan="9"
+                                    colSpan="8"
 
                                     style={{
 

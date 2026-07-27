@@ -102,6 +102,16 @@ function PreviewModal({
 
     }
 
+    console.log("Preview Content:", previewContent);
+    console.log("File:", previewContent.file);
+
+    if (isPdf(previewContent.file)) {
+        console.log(
+            "PDF URL:",
+            `http://127.0.0.1:8000${previewContent.file}`
+        );
+    }
+
     return (
 
         <div
@@ -213,133 +223,15 @@ function PreviewModal({
                                     ? (
 
                                         <video
-
                                             controls
-
                                             className="preview-video"
-
+                                            src={`http://127.0.0.1:8000${previewContent.file}`}
                                         >
-
-                                            <source
-
-                                                src={`http://127.0.0.1:8000${previewContent.file}`}
-
-                                            />
-
                                             Your browser does not support video.
-
                                         </video>
 
                                     )
-
-                                    : isPdf(
-
-                                        previewContent.file
-
-                                    )
-
-                                    ? (
-
-                                        <div className="preview-document">
-
-                                            <div className="preview-document-icon">
-
-                                                📄
-
-                                            </div>
-
-                                            <h3>
-
-                                                PDF Document
-
-                                            </h3>
-
-                                            <p>
-
-                                                Click below to open the PDF.
-
-                                            </p>
-
-                                            <button
-
-                                                className="primary-button"
-
-                                                onClick={()=>
-
-                                                    window.open(
-
-                                                        `http://127.0.0.1:8000${previewContent.file}`,
-
-                                                        "_blank"
-
-                                                    )
-
-                                                }
-
-                                            >
-
-                                                Open PDF
-
-                                            </button>
-
-                                        </div>
-
-                                    )
-
-                                    : isOffice(
-
-                                        previewContent.file
-
-                                    )
-
-                                    ? (
-
-                                        <div className="preview-document">
-
-                                            <div className="preview-document-icon">
-
-                                                📑
-
-                                            </div>
-
-                                            <h3>
-
-                                                Office Document
-
-                                            </h3>
-
-                                            <p>
-
-                                                Word, Excel or PowerPoint file.
-
-                                            </p>
-
-                                            <button
-
-                                                className="primary-button"
-
-                                                onClick={()=>
-
-                                                    window.open(
-
-                                                        `http://127.0.0.1:8000${previewContent.file}`,
-
-                                                        "_blank"
-
-                                                    )
-
-                                                }
-
-                                            >
-
-                                                Open File
-
-                                            </button>
-
-                                        </div>
-
-                                    )
-
+                                    
                                     : isImage(
 
                                         previewContent.file

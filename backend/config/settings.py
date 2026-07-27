@@ -182,3 +182,5 @@ SIMPLE_JWT = {
 }
 
 FRONTEND_URL = "http://localhost:5173"
+
+X_FRAME_OPTIONS = "SAMEORIGIN"

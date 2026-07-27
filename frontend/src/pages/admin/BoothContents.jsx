@@ -378,13 +378,13 @@ function BoothContents() {
 
         const maxSize = {
 
-            VIDEO: 200 * 1024 * 1024,
+            VIDEO: 1024 * 1024 * 1024,
 
-            DOCUMENT: 20 * 1024* 1024,
+            DOCUMENT: 100 * 1024* 1024,
 
-            PRESENTATION: 50 * 1024 *1024,
+            PRESENTATION: 200 * 1024 *1024,
 
-            ARTICLE: 20 * 1024 * 1024,
+            ARTICLE: 100 * 1024 * 1024,
         };
 
         if (
