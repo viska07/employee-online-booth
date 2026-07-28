@@ -1,5 +1,8 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
+from django.contrib.auth import authenticate
+from rest_framework.exceptions import AuthenticationFailed
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from .models import EmployeeProfile
 
 class UserSerializer(serializers.ModelSerializer):
@@ -187,9 +190,26 @@ class EmployeeCreateSerializer(serializers.Serializer):
         min_length=8
     )
 
+    confirm_password = serializers.CharField(
+        write_only=True
+    )
+
     is_staff = serializers.BooleanField(
         default=False
     )
+
+    def validate(self, attrs):
+
+        if attrs["password"] != attrs["confirm_password"]:
+
+            raise serializers.ValidationError({
+
+                "confirm_password":
+                "Password dan Confirm Password tidak sama."
+
+            })
+
+        return attrs
 
     def validate_username(self, value):
 
@@ -209,21 +229,18 @@ class EmployeeCreateSerializer(serializers.Serializer):
         return value
 
     def create(self, validated_data):
-
+        validated_data.pop("confirm_password")
         department = validated_data.pop("department")
         position = validated_data.pop("position")
         full_name = validated_data.pop("full_name")
-
         user = User.objects.create_user(
             username=validated_data["username"],
             email=validated_data["email"],
             password=validated_data["password"],
         )
-
         user.first_name = full_name
         user.is_staff = validated_data["is_staff"]
         user.save()
-
         EmployeeProfile.objects.create(
             user=user,
             department=department,
@@ -252,14 +269,11 @@ class EmployeeUpdateSerializer(serializers.Serializer):
         choices=EmployeeProfile.POSITION_CHOICES
     )
 
-    is_staff = serializers.BooleanField()
-
     def update(self, instance, validated_data):
 
         instance.first_name = validated_data["full_name"]
         instance.username = validated_data["username"]
         instance.email = validated_data["email"]
-        instance.is_staff = validated_data["is_staff"]
         instance.save()
 
         profile = instance.employee_profile
@@ -324,3 +338,30 @@ class EmployeeResetPasswordSerializer(serializers.Serializer):
             })
 
         return attrs
+
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+
+    def validate(self, attrs):
+
+        username = attrs.get("username")
+        password = attrs.get("password")
+
+        try:
+            user = User.objects.get(username=username)
+
+        except User.DoesNotExist:
+            raise AuthenticationFailed(
+                "Username atau password salah."
+            )
+
+        if not user.check_password(password):
+            raise AuthenticationFailed(
+                "Username atau password salah."
+            )
+
+        if not user.is_active:
+            raise AuthenticationFailed(
+                "Akun Anda telah dinonaktifkan. Silakan hubungi Administrator."
+            )
+
+        return super().validate(attrs)

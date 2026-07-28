@@ -1,60 +1,17 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { FaEllipsisV } from "react-icons/fa";
-import api from "../../services/api";
 import EmployeeActionMenu from "./EmployeeActionMenu";
 
-function EmployeeTable() {
+function EmployeeTable({
+    employees,
+    loading,
+    onEdit,
+    onToggleStatus,
+    onResetPassword,
+}) {
 
-    const [employees, setEmployees] = useState([]);
-    const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState("");
     const [selectedEmployee, setSelectedEmployee] = useState(null);
-
-    useEffect(() => {
-
-        fetchEmployees();
-
-    }, []);
-
-    const fetchEmployees = async () => {
-
-        try {
-
-            const response = await api.get(
-                "/accounts/admin/employees/"
-            );
-
-            setEmployees(response.data);
-
-        } catch (error) {
-
-            console.error(error);
-
-        } finally {
-
-            setLoading(false);
-
-        }
-
-    };
-
-    const handleEdit = (employee) => {
-
-        console.log("Edit Employee", employee);
-
-    };
-
-    const handleResetPassword = (employee) => {
-
-        console.log("Reset Password", employee);
-
-    };
-
-    const handleToggleStatus = (employee) => {
-
-        console.log("Toggle Status", employee);
-
-    };
 
     const filteredEmployees = employees.filter((employee) => {
 
@@ -283,19 +240,11 @@ function EmployeeTable() {
                                             selectedEmployee?.id === employee.id && (
 
                                                 <EmployeeActionMenu
-
                                                     employee={employee}
-
-                                                    onEdit={handleEdit}
-
-                                                    onResetPassword={handleResetPassword}
-
-                                                    onToggleStatus={handleToggleStatus}
-
-                                                    onClose={() =>
-                                                        setSelectedEmployee(null)
-                                                    }
-
+                                                    onEdit={onEdit}
+                                                    onResetPassword={onResetPassword}
+                                                    onToggleStatus={onToggleStatus}
+                                                    onClose={() => setSelectedEmployee(null)}
                                                 />
 
                                             )

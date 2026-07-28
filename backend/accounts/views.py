@@ -10,11 +10,13 @@ from rest_framework_simplejwt.views import (
 from .serializers import (
     UserSerializer,
     RegisterSerializer,
+    CustomTokenObtainPairSerializer,
 )
 
 
 class LoginView(TokenObtainPairView):
-    pass
+
+    serializer_class = CustomTokenObtainPairSerializer
 
 
 class RegisterView(APIView):

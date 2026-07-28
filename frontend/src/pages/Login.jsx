@@ -65,10 +65,11 @@ function Login() {
 
             }
 
-        } catch {
+        } catch (error) {
 
             setError(
-                "Username atau Password salah."
+                error.response?.data?.detail ||
+                "Terjadi kesalahan saat login."
             );
 
         } finally {

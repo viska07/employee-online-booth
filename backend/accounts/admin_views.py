@@ -53,7 +53,7 @@ class EmployeeListAPIView(APIView):
 
 class EmployeeDetailAPIView(APIView):
 
-    Permission_classes = [
+    permission_classes = [
         IsAuthenticated,
         IsAdminEmployee,
     ]
@@ -185,12 +185,13 @@ class EmployeeActiveAPIView(APIView):
             pk=pk
         )
 
-        employee.is_active = True
+        employee.is_active = not employee.is_active
         employee.save()
 
         return Response(
             {
-                "message": "Employee berhasil diaktifkan"
+                "message": "Status employee berhasil diperbarui",
+                "is_active": employee.is_active,
             },
             status=status.HTTP_200_OK,
         )

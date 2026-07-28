@@ -1,15 +1,14 @@
 import { useState, useEffect } from "react";
 
 function EmployeeFormModal({
-
     open,
     title,
+    employee,
+    onSubmit,
     onClose,
-
 }) {
 
     const initialForm = {
-
         full_name: "",
         username: "",
         email: "",
@@ -17,20 +16,60 @@ function EmployeeFormModal({
         position: "",
         password: "",
         confirm_password: "",
-
     };
+
+    const departments = [
+        { value: "HR", label: "Human Resource" },
+        { value: "PRODUCTION", label: "Production" },
+        { value: "ENGINEERING", label: "Engineering" },
+        { value: "QUALITY", label: "Quality Control" },
+        { value: "WAREHOUSE", label: "Warehouse" },
+        { value: "PURCHASING", label: "Purchasing" },
+        { value: "FINANCE", label: "Finance" },
+        { value: "IT", label: "Information Technology" },
+        { value: "GA", label: "General Affairs" },
+        { value: "MARKETING", label: "Marketing" },
+    ];
+
+    const positions = [
+        { value: "STAFF", label: "Staff" },
+        { value: "OPERATOR", label: "Operator" },
+        { value: "SUPERVISOR", label: "Supervisor" },
+        { value: "MANAGER", label: "Manager" },
+        { value: "ENGINEER", label: "Engineer" },
+        { value: "TECHNICIAN", label: "Technician" },
+        { value: "ADMIN", label: "Administrator" },
+        { value: "INTERN", label: "Intern" },
+        { value: "LEADER", label: "Leader" },
+    ];
 
     const [form, setForm] = useState(initialForm);
 
     useEffect(() => {
 
-        if (open) {
+        if (!open) return;
+
+        if (employee) {
+
+            setForm({
+
+                full_name: employee.full_name || "",
+                username: employee.username || "",
+                email: employee.email || "",
+                department: employee.department || "",
+                position: employee.position || "",
+                password: "",
+                confirm_password: "",
+
+            });
+
+        } else {
 
             setForm(initialForm);
 
         }
 
-    }, [open]);
+    }, [open, employee]);
 
     if (!open) return null;
 
@@ -46,11 +85,29 @@ function EmployeeFormModal({
 
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
 
         e.preventDefault();
 
-        console.log(form);
+        if (form.password !== form.confirm_password) {
+
+            alert("Password dan Confirm Password tidak sama.");
+
+            return;
+
+        }
+
+        try {
+
+            await onSubmit(form);
+
+        } catch (error) {
+
+            console.error(error);
+
+            alert("Gagal menyimpan data.");
+
+        }
 
     };
 
@@ -91,17 +148,11 @@ function EmployeeFormModal({
                         <label>Full Name</label>
 
                         <input
-
                             type="text"
-
                             name="full_name"
-
                             value={form.full_name}
-
                             onChange={handleChange}
-
                             required
-
                         />
 
                     </div>
@@ -111,17 +162,11 @@ function EmployeeFormModal({
                         <label>Username</label>
 
                         <input
-
                             type="text"
-
                             name="username"
-
                             value={form.username}
-
                             onChange={handleChange}
-
                             required
-
                         />
 
                     </div>
@@ -131,17 +176,11 @@ function EmployeeFormModal({
                         <label>Email</label>
 
                         <input
-
                             type="email"
-
                             name="email"
-
                             value={form.email}
-
                             onChange={handleChange}
-
                             required
-
                         />
 
                     </div>
@@ -152,17 +191,33 @@ function EmployeeFormModal({
 
                             <label>Department</label>
 
-                            <input
-
-                                type="text"
-
+                            <select
                                 name="department"
-
                                 value={form.department}
-
                                 onChange={handleChange}
+                                required
+                            >
 
-                            />
+                                <option value="">
+                                    -- Select Department --
+                                </option>
+
+                                {
+
+                                    departments.map((department) => (
+
+                                        <option
+                                            key={department.value}
+                                            value={department.value}
+                                        >
+                                            {department.label}
+                                        </option>
+
+                                    ))
+
+                                }
+
+                            </select>
 
                         </div>
 
@@ -170,17 +225,33 @@ function EmployeeFormModal({
 
                             <label>Position</label>
 
-                            <input
-
-                                type="text"
-
+                            <select
                                 name="position"
-
                                 value={form.position}
-
                                 onChange={handleChange}
+                                required
+                            >
 
-                            />
+                                <option value="">
+                                    -- Select Position --
+                                </option>
+
+                                {
+
+                                    positions.map((position) => (
+
+                                        <option
+                                            key={position.value}
+                                            value={position.value}
+                                        >
+                                            {position.label}
+                                        </option>
+
+                                    ))
+
+                                }
+
+                            </select>
 
                         </div>
 
@@ -193,17 +264,11 @@ function EmployeeFormModal({
                             <label>Password</label>
 
                             <input
-
                                 type="password"
-
                                 name="password"
-
                                 value={form.password}
-
                                 onChange={handleChange}
-
-                                required
-
+                                required={!employee}
                             />
 
                         </div>
@@ -213,17 +278,11 @@ function EmployeeFormModal({
                             <label>Confirm Password</label>
 
                             <input
-
                                 type="password"
-
                                 name="confirm_password"
-
                                 value={form.confirm_password}
-
                                 onChange={handleChange}
-
-                                required
-
+                                required={!employee}
                             />
 
                         </div>
@@ -254,7 +313,7 @@ function EmployeeFormModal({
 
                         >
 
-                            Create Employee
+                            {employee ? "Save Changes" : "Create Employee"}
 
                         </button>
 
