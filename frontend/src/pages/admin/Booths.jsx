@@ -8,6 +8,8 @@ function Booths() {
     const [booths, setBooths] = useState([]);
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState("");
+    const [statusFilter, setStatusFilter] = useState("all");
+    const [sortBy, setSortBy] = useState("newest");
     const [showModal, setShowModal] = useState(false);
     const [formData, setFormData] = useState({
         title: "",
@@ -58,13 +60,52 @@ function Booths() {
 
     }, []);
 
-    const filteredBooths = booths.filter((booth) =>
+    const filteredBooths = booths
+        .filter((booth) => {
+            const matchSearch = booth.title
+                .toLowerCase()
+                .includes(search.toLowerCase());
 
-        booth.title
-            .toLowerCase()
-            .includes(search.toLowerCase())
+            let matchStatus = true;
 
-    );
+            switch (statusFilter) {
+                case "active":
+                    matchStatus = booth.is_active;
+                    break;
+
+                case "inactive":
+                    matchStatus = !booth.is_active;
+                    break;
+
+                case "featured":
+                    matchStatus = booth.is_featured;
+                    break;
+
+                default:
+                    matchStatus = true;
+            }
+
+            return matchSearch && matchStatus;
+        })
+        .sort((a, b) => {
+            switch (sortBy) {
+                case "oldest":
+                    return new Date(a.created_at) - new Date(b.created_at);
+
+                case "az":
+                    return a.title.localeCompare(b.title);
+
+                case "za":
+                    return b.title.localeCompare(a.title);
+
+                case "views":
+                    return b.view_count - a.view_count;
+
+                case "newest":
+                default:
+                    return new Date(b.created_at) - new Date(a.created_at);
+            }
+        });
 
     const handleEditBooth = (booth) => {
 
@@ -286,6 +327,16 @@ function Booths() {
 
     };
 
+    const formatDate = (date) => {
+        if (!date) return "-";
+
+        return new Date(date).toLocaleDateString("en-GB", {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+        });
+    };
+
     return (
 
         <div className="admin-page">
@@ -295,45 +346,64 @@ function Booths() {
                 <div className="content-management-header-info">
 
                     <h1>
-                        Booth Content Management
+                        Booth Management
                     </h1>
 
                     <p>
-                        Manage all learning materials inside this booth.
+                        Create, organize, and manage all booths available in the online booth.
                     </p>
 
                 </div>
 
-                <button
-
-                    type="button"
-
-                    className="primary-button content-add-button"
-
-                    onClick={() =>
-                        setShowModal(true)
-                    }
-
-                >
-
-                    + Add Content
-
-                </button>
+                    <button
+                        type="button"
+                        className="primary-button content-add-button"
+                        onClick={() => setShowModal(true)}
+                    >
+                        + Add Booth
+                    </button>
 
             </div>
 
-            <div className="admin-search">
+            <div className="admin-toolbar">
 
-                <input
-                    type="text"
-                    placeholder="Search booth..."
-                    value={search}
-                    onChange={(e)=>
+                <div className="admin-search">
+                    <input
+                        type="text"
+                        placeholder="Search booth..."
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                    />
+                </div>
 
-                        setSearch(e.target.value)
+                <div className="admin-toolbar-right">
 
-                    }
-                />
+                    <div className="admin-filter">
+                        <select
+                            value={statusFilter}
+                            onChange={(e) => setStatusFilter(e.target.value)}
+                        >
+                            <option value="all">All Booths</option>
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                            <option value="featured">Featured</option>
+                        </select>
+                    </div>
+
+                    <div className="admin-filter">
+                        <select
+                            value={sortBy}
+                            onChange={(e) => setSortBy(e.target.value)}
+                        >
+                            <option value="newest">Newest</option>
+                            <option value="oldest">Oldest</option>
+                            <option value="views">Most Viewed</option>
+                            <option value="az">Title (A-Z)</option>
+                            <option value="za">Title (Z-A)</option>
+                        </select>
+                    </div>
+
+                </div>
 
             </div>
 
@@ -394,17 +464,16 @@ function Booths() {
                                             <p>{booth.description}</p>
 
                                             <div className="admin-booth-info">
-
                                                 <span>
-
                                                     👀 {booth.view_count} Views
-
                                                 </span>
 
                                                 <span>
-
                                                     📚 {booth.contents_count} Materials
+                                                </span>
 
+                                                <span>
+                                                    🕒 Updated {formatDate(booth.updated_at)}
                                                 </span>
 
                                             </div>
@@ -447,26 +516,28 @@ function Booths() {
                                                     className="content-button"
                                                     onClick={() => navigate(`/management/booths/${booth.id}/contents`)}
                                                 >
-
                                                     Content
-
                                                 </button>
 
                                                 <button
+                                                    className="edit-button"
                                                     onClick={() => handleEditBooth(booth)}
                                                 >
-
                                                     Edit
-
                                                 </button>
 
                                                 <button
                                                     className="delete-button"
                                                     onClick={() => setDeleteBooth(booth)}
                                                 >
-
                                                     Delete
+                                                </button>
 
+                                                <button
+                                                    className="preview-button"
+                                                    onClick={() => window.open(`/booth/${booth.id}`, "_blank")}
+                                                >
+                                                    Preview
                                                 </button>
 
                                             </div>
@@ -501,39 +572,6 @@ function Booths() {
                                     Create your first booth by clicking the button below.
 
                                 </p>
-
-                                <button
-                                    className="primary-button"
-                                    onClick={() => {
-
-                                        setEditingBooth(null);
-
-                                        setPreviewImage(null);
-
-                                        setFormData({
-
-                                            title: "",
-
-                                            description: "",
-
-                                            thumbnail: null,
-
-                                            is_active: true,
-
-                                            is_featured: false,
-
-                                        });
-
-                                        document.body.style.overflow = "hidden";
-
-                                        setShowModal(true);
-
-                                    }}
-                                >
-
-                                    + Add Booth
-
-                                </button>
 
                             </div>
                         )
