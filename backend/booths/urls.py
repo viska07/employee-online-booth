@@ -1,4 +1,5 @@
 from django.urls import path
+from .views_report import reports_overview
 from .views import (
     BoothListAPIView,
     BoothActivityCreateAPIView,
@@ -101,6 +102,12 @@ urlpatterns = [
     path(
         "management/content/<int:content_id>/viewers/",
         BoothContentViewersAPIView.as_view(),
+    ),
+
+    path(
+        "reports/",
+        reports_overview,
+        name="reports-overview",
     ),
 
 ]

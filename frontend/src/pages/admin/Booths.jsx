@@ -10,6 +10,8 @@ function Booths() {
     const [search, setSearch] = useState("");
     const [statusFilter, setStatusFilter] = useState("all");
     const [sortBy, setSortBy] = useState("newest");
+    const [currentPage, setCurrentPage] = useState(1);
+    const boothsPerPage = 9;
     const [showModal, setShowModal] = useState(false);
     const [formData, setFormData] = useState({
         title: "",
@@ -60,6 +62,10 @@ function Booths() {
 
     }, []);
 
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [search, statusFilter, sortBy]);
+
     const filteredBooths = booths
         .filter((booth) => {
             const matchSearch = booth.title
@@ -106,6 +112,16 @@ function Booths() {
                     return new Date(b.created_at) - new Date(a.created_at);
             }
         });
+
+    const totalPages = Math.ceil(filteredBooths.length / boothsPerPage);
+
+    const indexOfLastBooth = currentPage * boothsPerPage;
+    const indexOfFirstBooth = indexOfLastBooth - boothsPerPage;
+
+    const currentBooths = filteredBooths.slice(
+        indexOfFirstBooth,
+        indexOfLastBooth
+    );
 
     const handleEditBooth = (booth) => {
 
@@ -427,9 +443,11 @@ function Booths() {
 
                         filteredBooths.length > 0 ? (
 
+                            <>
+
                             <div className="booth-management-grid">
 
-                                {filteredBooths.map((booth) => (
+                                {currentBooths.map((booth) => (
 
                                     <div
                                         key={booth.id}
@@ -483,17 +501,13 @@ function Booths() {
                                                 {booth.is_active ? (
 
                                                     <span className="status-active">
-
-                                                        Active
-
+                                                        🟢 Active
                                                     </span>
 
                                                 ) : (
 
                                                     <span className="status-inactive">
-
-                                                        Inactive
-
+                                                        🔴 Inactive
                                                     </span>
 
                                                 )}
@@ -501,9 +515,7 @@ function Booths() {
                                                 {booth.is_featured && (
 
                                                     <span className="status-featured">
-
-                                                        Featured
-
+                                                        ⭐ Featured
                                                     </span>
 
                                                 )}
@@ -549,6 +561,42 @@ function Booths() {
                                 ))}
 
                             </div>
+
+                            {totalPages > 1 && (
+                                <div className="pagination">
+
+                                    <button
+                                        disabled={currentPage === 1}
+                                        onClick={() => setCurrentPage(currentPage - 1)}
+                                    >
+                                        Previous
+                                    </button>
+
+                                    {Array.from({ length: totalPages }, (_, index) => (
+                                        <button
+                                            key={index}
+                                            className={
+                                                currentPage === index + 1
+                                                    ? "active-page"
+                                                    : ""
+                                            }
+                                            onClick={() => setCurrentPage(index + 1)}
+                                        >
+                                            {index + 1}
+                                        </button>
+                                    ))}
+
+                                    <button
+                                        disabled={currentPage === totalPages}
+                                        onClick={() => setCurrentPage(currentPage + 1)}
+                                    >
+                                        Next
+                                    </button>
+
+                                </div>
+                            )}
+
+                            </>
 
                         ) : (
 
