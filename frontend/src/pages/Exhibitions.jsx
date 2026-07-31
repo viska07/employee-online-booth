@@ -39,19 +39,57 @@ function Exhibitions() {
 
     }, []);
 
-  const filteredBooths = booths.filter((booth) =>
+  const keyword = searchTerm.toLowerCase().trim();
 
-    booth.title
-      .toLowerCase()
-      .includes(searchTerm.toLowerCase())
+  const filteredBooths = booths
+      .map((booth) => {
 
-    ||
+          const matchedContents = booth.contents.filter((content) => {
 
-    booth.description
-      .toLowerCase()
-      .includes(searchTerm.toLowerCase())
+              return (
 
-  );
+                  content.title?.toLowerCase().includes(keyword)
+
+                  ||
+
+                  content.description?.toLowerCase().includes(keyword)
+
+              );
+
+          });
+
+          const boothMatched =
+
+              booth.title?.toLowerCase().includes(keyword)
+
+              ||
+
+              booth.description?.toLowerCase().includes(keyword);
+
+          return {
+
+              ...booth,
+
+              matchedContents,
+
+              boothMatched,
+
+          };
+
+      })
+      .filter((booth) =>
+
+          keyword === ""
+
+          ||
+
+          booth.boothMatched
+
+          ||
+
+          booth.matchedContents.length > 0
+
+      );
 
   const handleEnterBooth = (boothId) => {
 
@@ -250,6 +288,69 @@ function Exhibitions() {
                       {booth.description}
 
                     </p>
+
+                    {searchTerm.trim() !== "" && booth.matchedContents.length > 0 && (
+
+                      <div className="search-result-box">
+
+                          <h4>
+                              🔍 Materi Ditemukan
+                          </h4>
+
+                          {booth.matchedContents.map((content) => (
+
+                              <div
+                                  key={content.id}
+                                  className="search-result-item"
+                                  style={{
+                                      cursor: "pointer"
+                                  }}
+                                  onClick={() =>
+                                      navigate(
+                                          `/booth/${booth.id}?content=${content.id}`
+                                      )
+                                  }
+                              >
+
+                                  <span className="content-icon">
+
+                                      {content.type === "VIDEO" && "🎥"}
+
+                                      {content.type === "DOCUMENT" && "📄"}
+
+                                      {content.type === "PRESENTATION" && "📊"}
+
+                                      {content.type === "ARTICLE" && "📰"}
+
+                                  </span>
+
+                                  <div className="search-result-info">
+
+                                      <strong>
+                                          {content.title}
+                                      </strong>
+
+                                      {content.description && (
+
+                                          <small>
+
+                                              {content.description.length > 80
+                                                  ? content.description.substring(0, 80) + "..."
+                                                  : content.description}
+
+                                          </small>
+
+                                      )}
+
+                                  </div>
+
+                              </div>
+
+                          ))}
+
+                      </div>
+
+                  )}
 
                     <button
                       className="visit-booth-btn"

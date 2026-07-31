@@ -18,7 +18,7 @@ function Register() {
 
         username: "",
 
-        email: "",
+        nik: "",
 
         department: "",
 
@@ -154,10 +154,10 @@ function Register() {
                     />
 
                     <input
-                        type="email"
-                        name="email"
-                        placeholder="Email"
-                        value={formData.email}
+                        type="text"
+                        name="nik"
+                        placeholder="NIK"
+                        value={formData.nik}
                         onChange={handleChange}
                         required
                     />

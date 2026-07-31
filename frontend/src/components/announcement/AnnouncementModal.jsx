@@ -412,6 +412,8 @@ function AnnouncementModal({
 
                 </div>
 
+                {/*
+
                 <div className="announcement-email-section">
 
                     <label className="announcement-checkbox-row">
@@ -682,6 +684,10 @@ function AnnouncementModal({
 
                 </div>
 
+                */}
+
+                {/*
+
                 <div className="checkbox-group">
 
                     <label>
@@ -711,6 +717,8 @@ function AnnouncementModal({
                     </label>
 
                 </div>
+
+                */}
 
                 <div className="modal-actions">
 

@@ -1,6 +1,14 @@
 import { useLanguage } from "../language/LanguageContext";
-import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import {
+    useEffect,
+    useState,
+    useRef,
+} from "react";
+import {
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from "react-router-dom";
 import Navbar from "../components/Navbar";
 import "../styles/boothDetail.css";
 import api from "../services/api";
@@ -9,12 +17,17 @@ import PreviewModal from "../components/boothContent/PreviewModal";
 function BoothDetail() {
   const navigate = useNavigate();
   const { id } = useParams();
+  const [searchParams] = useSearchParams();
+  const targetContentId = Number(
+      searchParams.get("content")
+  );
   const [booth, setBooth] = useState(null);
   const [contents, setContents] = useState([]);
   const [viewedContents, setViewedContents] = useState([]);
   const { language } = useLanguage();
   const [previewImage, setPreviewImage] = useState(false);
   const [previewContent, setPreviewContent] = useState(null);
+  const contentRefs = useRef({});
   const getContentIcon = (type) => {
 
     switch(type){
@@ -155,6 +168,44 @@ function BoothDetail() {
       });
   }, [id]);
 
+  useEffect(() => {
+
+      if (
+          !targetContentId ||
+          contents.length === 0
+      ) {
+          return;
+      }
+
+      const element =
+          contentRefs.current[targetContentId];
+
+      if (element) {
+
+          element.scrollIntoView({
+
+              behavior: "smooth",
+
+              block: "center",
+
+          });
+
+          element.classList.add(
+              "search-highlight"
+          );
+
+          setTimeout(() => {
+
+              element.classList.remove(
+                  "search-highlight"
+              );
+
+          }, 2500);
+
+      }
+
+  }, [contents, targetContentId]);
+
   if (!booth) {
     return (
       <p style={{ padding: "40px" }}>
@@ -262,8 +313,11 @@ function BoothDetail() {
               {contents.map((content) => (
 
                 <div
-                  key={content.id}
-                  className="content-card"
+                    key={content.id}
+                    ref={(el) => {
+                        contentRefs.current[content.id] = el;
+                    }}
+                    className="content-card"
                 >
 
                   <div className="content-header">

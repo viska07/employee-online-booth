@@ -31,7 +31,7 @@ function EmployeeTable({
 
             ||
 
-            employee.email
+            employee.nik
                 ?.toLowerCase()
                 .includes(keyword)
 
@@ -103,7 +103,7 @@ function EmployeeTable({
 
                         <th>Name</th>
                         <th>Username</th>
-                        <th>Email</th>
+                        <th>NIK</th>
                         <th>Department</th>
                         <th>Position</th>
                         <th>Status</th>
@@ -159,7 +159,7 @@ function EmployeeTable({
 
                                     <td>
 
-                                        {employee.email}
+                                        {employee.nik || "-"}
 
                                     </td>
 

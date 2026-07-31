@@ -251,3 +251,47 @@
         grid-template-columns:1fr;
     }
 }
+
+.search-result-box{
+    margin-top:16px;
+    padding:12px;
+    background:#f8fafc;
+    border-radius:10px;
+    border:1px solid #dbeafe;
+}
+
+.search-result-box h4{
+    margin:0 0 10px;
+    font-size:14px;
+    color:#2563eb;
+}
+
+.search-result-item{
+    display:flex;
+    gap:10px;
+    align-items:flex-start;
+    padding:8px 0;
+    border-bottom:1px solid #e5e7eb;
+}
+
+.search-result-item:last-child{
+    border-bottom:none;
+}
+
+.content-icon{
+    font-size:20px;
+}
+
+.search-result-info{
+    display:flex;
+    flex-direction:column;
+}
+
+.search-result-info strong{
+    font-size:14px;
+}
+
+.search-result-info small{
+    color:#6b7280;
+    margin-top:2px;
+}

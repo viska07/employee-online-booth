@@ -173,6 +173,8 @@ function AnnouncementTable({
                                             ✏ Edit
                                         </button>
 
+                                        {/*
+
                                         <button
                                             className="table-email-button"
                                             onClick={() =>
@@ -183,6 +185,8 @@ function AnnouncementTable({
                                         >
                                             📧 Resend Email
                                         </button>
+
+                                        */}
 
                                         <button
                                             className="table-delete-button"

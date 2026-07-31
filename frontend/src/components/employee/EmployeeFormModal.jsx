@@ -12,6 +12,7 @@ function EmployeeFormModal({
         full_name: "",
         username: "",
         email: "",
+        nik: "",
         department: "",
         position: "",
         password: "",
@@ -56,10 +57,9 @@ function EmployeeFormModal({
                 full_name: employee.full_name || "",
                 username: employee.username || "",
                 email: employee.email || "",
+                nik: employee.nik || "",
                 department: employee.department || "",
                 position: employee.position || "",
-                password: "",
-                confirm_password: "",
 
             });
 
@@ -173,12 +173,12 @@ function EmployeeFormModal({
 
                     <div className="form-group">
 
-                        <label>Email</label>
+                        <label>NIK</label>
 
                         <input
-                            type="email"
-                            name="email"
-                            value={form.email}
+                            type="text"
+                            name="nik"
+                            value={form.nik}
                             onChange={handleChange}
                             required
                         />

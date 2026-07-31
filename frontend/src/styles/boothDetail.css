@@ -459,3 +459,23 @@
         font-size:14px;
     }
 }
+/* ======================================================
+
+====================================================== */
+.search-highlight{
+    animation: searchFlash 2.5s ease;
+}
+
+@keyframes searchFlash{
+    0%{
+        background:#fff7cc;
+        transform:scale(1.02);
+    }
+    50%{
+        background:#fff2a8;
+    }
+    100%{
+        background:white;
+        transform:scale(1);
+    }
+}

@@ -12,6 +12,11 @@ class UserSerializer(serializers.ModelSerializer):
         read_only=True
     )
 
+    nik = serializers.CharField(
+        source="employee_profile.nik",
+        read_only=True
+    )
+
     department = serializers.CharField(
         source="employee_profile.department",
         read_only=True
@@ -30,6 +35,7 @@ class UserSerializer(serializers.ModelSerializer):
             "id",
             "username",
             "email",
+            "nik",
             "full_name",
             "department",
             "position",
@@ -48,7 +54,14 @@ class RegisterSerializer(serializers.Serializer):
         max_length=150
     )
 
-    email = serializers.EmailField()
+    email = serializers.EmailField(
+        required=False,
+        allow_blank=True
+    )
+
+    nik = serializers.CharField(
+        max_length=20
+    )
 
     department = serializers.ChoiceField(
         choices=EmployeeProfile.DEPARTMENT_CHOICES
@@ -70,34 +83,25 @@ class RegisterSerializer(serializers.Serializer):
     def validate(self, attrs):
 
         if attrs["password"] != attrs["confirm_password"]:
-
             raise serializers.ValidationError({
-
                 "confirm_password":
                 "Password dan Confirm Password tidak sama."
-
             })
 
         if User.objects.filter(
             username=attrs["username"]
         ).exists():
-
             raise serializers.ValidationError({
-
                 "username":
                 "Username sudah digunakan."
-
             })
 
-        if User.objects.filter(
-            email=attrs["email"]
-        ).exists():
+        email = attrs.get("email")
 
+        if email and User.objects.filter(email=email).exists():
             raise serializers.ValidationError({
-
                 "email":
                 "Email sudah digunakan."
-
             })
 
         return attrs
@@ -114,10 +118,12 @@ class RegisterSerializer(serializers.Serializer):
 
         full_name = validated_data.pop("full_name")
 
+        nik = validated_data.pop("nik")
+
         user = User.objects.create_user(
 
             username=validated_data["username"],
-            email=validated_data["email"],
+            email=validated_data.get("email", ""),
             password=password,
         )
 
@@ -127,6 +133,7 @@ class RegisterSerializer(serializers.Serializer):
 
         EmployeeProfile.objects.create(
             user=user,
+            nik=nik,
             department=department,
             position=position,
         )
@@ -137,6 +144,11 @@ class EmployeeSerializer(serializers.ModelSerializer):
 
     full_name = serializers.CharField(
         source="first_name",
+        read_only=True
+    )
+
+    nik = serializers.CharField(
+        source="employee_profile.nik",
         read_only=True
     )
 
@@ -158,7 +170,7 @@ class EmployeeSerializer(serializers.ModelSerializer):
             "id",
             "full_name",
             "username",
-            "email",
+            "nik",
             "department",
             "position",
             "is_active",
@@ -175,7 +187,14 @@ class EmployeeCreateSerializer(serializers.Serializer):
         max_length=150
     )
 
-    email =serializers.EmailField()
+    email = serializers.EmailField(
+        required=False,
+        allow_blank=True
+    )
+
+    nik = serializers.CharField(
+        max_length=20
+    )
 
     department = serializers.ChoiceField(
         choices=EmployeeProfile.DEPARTMENT_CHOICES
@@ -222,9 +241,21 @@ class EmployeeCreateSerializer(serializers.Serializer):
 
     def validate_email(self, value):
 
+        if value == "":
+            return value
+
         if User.objects.filter(email=value).exists():
             raise serializers.ValidationError(
                 "Email sudah digunakan"
+            )
+
+        return value
+
+    def validate_nik(self, value):
+
+        if EmployeeProfile.objects.filter(nik=value).exists():
+            raise serializers.ValidationError(
+                "NIK sudah digunakan"
             )
         return value
 
@@ -233,9 +264,10 @@ class EmployeeCreateSerializer(serializers.Serializer):
         department = validated_data.pop("department")
         position = validated_data.pop("position")
         full_name = validated_data.pop("full_name")
+        nik = validated_data.pop("nik")
         user = User.objects.create_user(
             username=validated_data["username"],
-            email=validated_data["email"],
+            email=validated_data.get("email", ""),
             password=validated_data["password"],
         )
         user.first_name = full_name
@@ -243,6 +275,7 @@ class EmployeeCreateSerializer(serializers.Serializer):
         user.save()
         EmployeeProfile.objects.create(
             user=user,
+            nik=nik,
             department=department,
             position=position,
         )
@@ -259,7 +292,14 @@ class EmployeeUpdateSerializer(serializers.Serializer):
         max_length=150
     )
 
-    email = serializers.EmailField()
+    email = serializers.EmailField(
+        required=False,
+        allow_blank=True
+    )
+
+    nik = serializers.CharField(
+        max_length=20
+    )
 
     department = serializers.ChoiceField(
         choices=EmployeeProfile.DEPARTMENT_CHOICES
@@ -273,10 +313,11 @@ class EmployeeUpdateSerializer(serializers.Serializer):
 
         instance.first_name = validated_data["full_name"]
         instance.username = validated_data["username"]
-        instance.email = validated_data["email"]
+        instance.email = validated_data.get("email", instance.email)
         instance.save()
 
         profile = instance.employee_profile
+        profile.nik = validated_data["nik"]
         profile.department = validated_data["department"]
         profile.position = validated_data["position"]
         profile.save()
@@ -301,16 +342,30 @@ class EmployeeUpdateSerializer(serializers.Serializer):
 
     def validate_email(self, value):
 
+        if value == "":
+            return value
+
         user = self.instance
 
-        if User.objects.exclude(
-            id=user.id
+        if User.objects.exclude(id=user.id).filter(email=value).exists():
+            raise serializers.ValidationError(
+                "Email sudah digunakan"
+            )
+
+        return value
+
+    def validate_nik(self, value):
+
+        user = self.instance
+
+        if EmployeeProfile.objects.exclude(
+            user=user
         ).filter(
-            email=value
+            nik=value
         ).exists():
 
             raise serializers.ValidationError(
-                "Email sudah digunakan"
+                "NIK sudah digunakan"
             )
 
         return value
