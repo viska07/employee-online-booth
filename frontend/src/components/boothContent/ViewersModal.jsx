@@ -1,7 +1,5 @@
-import * as XLSX from "xlsx";
-import { saveAs } from "file-saver";
-
 function ViewersModal({
+
     show,
     viewers,
     onClose,
@@ -14,81 +12,9 @@ function ViewersModal({
 
     }
 
-    function exportExcel(){
+    const employees = viewers?.employees || [];
 
-        const data = viewers.map(
-
-            (viewer,index)=>({
-
-                No:index+1,
-
-                Name:viewer.user_name,
-
-                Email:viewer.user_email,
-
-                Viewed_At:new Date(
-
-                    viewer.created_at
-
-                ).toLocaleString(),
-
-            })
-
-        );
-
-        const worksheet = XLSX.utils.json_to_sheet(data);
-
-        const workbook = XLSX.utils.book_new();
-
-        XLSX.utils.book_append_sheet(
-
-            workbook,
-
-            worksheet,
-
-            "Viewers"
-
-        );
-
-        const excelBuffer = XLSX.write(
-
-            workbook,
-
-            {
-
-                bookType:"xlsx",
-
-                type:"array",
-
-            }
-
-        );
-
-        const file = new Blob(
-
-            [excelBuffer],
-
-            {
-
-                type:
-
-                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8",
-
-            }
-
-        );
-
-        saveAs(
-
-            file,
-
-            "Content_Viewers.xlsx"
-
-        );
-
-    }
-
-    return (
+    return(
 
         <div
             className="modal-overlay"
@@ -102,21 +28,76 @@ function ViewersModal({
 
                 <div className="viewer-title">
 
-                    <div className="viewer-header">
+                    <h2>
 
-                        <h2>
+                        Content Readers
 
-                            People Who Viewed
+                    </h2>
 
-                        </h2>
+                    <p>
+
+                        {viewers.content_title}
+
+                    </p>
+
+                </div>
+
+                <div className="viewer-summary">
+
+                    <div>
+
+                        <strong>
+
+                            Department
+
+                        </strong>
+
+                        <p>
+
+                            {viewers.department}
+
+                        </p>
+
+                    </div>
+
+                    <div>
+
+                        <strong>
+
+                            Progress
+
+                        </strong>
+
+                        <p>
+
+                            {viewers.viewed} / {viewers.total_employee} Employee
+
+                        </p>
 
                     </div>
 
                 </div>
 
+                <div className="viewer-progress">
+
+                    <div
+                        className="viewer-progress-fill"
+                        style={{
+                            width:`${viewers.progress}%`
+                        }}
+                    ></div>
+
+                </div>
+
+                <div className="viewer-progress-text">
+
+                    {viewers.progress}% Completed
+
+                </div>
+
                 {
 
-                    viewers.length===0
+                    employees.length===0
 
                     ?
 
@@ -124,23 +105,11 @@ function ViewersModal({
 
                         <div className="empty-viewers">
 
-                            <div style={{fontSize:"60px"}}>
-
-                                👀
-
-                            </div>
-
                             <h3>
 
-                                No viewers yet
+                                No Employee
 
                             </h3>
-
-                            <p>
-
-                                Nobody has viewed this content.
-
-                            </p>
 
                         </div>
 
@@ -154,38 +123,120 @@ function ViewersModal({
 
                             {
 
-                                viewers.map(viewer=>(
+                                employees.map(employee=>(
 
                                     <div
-                                        key={viewer.id}
+                                        key={employee.id}
                                         className="viewer-card"
                                     >
 
                                         <div className="viewer-info">
 
-                                            <span className="viewer-name">
+                                            <strong>
 
-                                                👤 {viewer.user_name}
+                                                {
+
+                                                    employee.viewed
+
+                                                    ?
+
+                                                    "✅"
+
+                                                    :
+
+                                                    "⬜"
+
+                                                }
+
+                                                {" "}
+
+                                                {employee.name}
+
+                                            </strong>
+
+                                            <span>
+
+                                                NIK : {employee.nik}
 
                                             </span>
 
-                                            <span className="viewer-email">
+                                            <small>
 
-                                                {viewer.user_email}
+                                                {employee.position}
 
-                                            </span>
-
-                                        </div>
-
-                                        <div className="viewer-date">
+                                            </small>
 
                                             {
 
-                                                new Date(
+                                                employee.viewed_at && (
 
-                                                    viewer.created_at
+                                                    <small>
 
-                                                ).toLocaleString()
+                                                        Viewed :
+
+                                                        {" "}
+
+                                                        {
+
+                                                            new Date(
+
+                                                                employee.viewed_at
+
+                                                            ).toLocaleString(
+
+                                                                "en-GB",
+
+                                                                {
+
+                                                                    day:"2-digit",
+
+                                                                    month:"short",
+
+                                                                    year:"numeric",
+
+                                                                    hour:"2-digit",
+
+                                                                    minute:"2-digit",
+
+                                                                }
+
+                                                            )
+
+                                                        }
+
+                                                    </small>
+
+                                                )
+
+                                            }
+
+                                        </div>
+
+                                        <div>
+
+                                            {
+
+                                                employee.viewed
+
+                                                ?
+
+                                                <span
+                                                    className="viewer-status viewed"
+                                                >
+
+                                                    Viewed
+
+                                                </span>
+
+                                                :
+
+                                                <span
+                                                    className="viewer-status not-viewed"
+                                                >
+
+                                                    Not Viewed
+
+                                                </span>
 
                                             }
 

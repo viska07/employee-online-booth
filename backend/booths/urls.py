@@ -1,5 +1,8 @@
 from django.urls import path
-from .views_report import reports_overview
+from .views_report import (
+    reports_overview,
+    reset_demo_data,
+)
 from .views import (
     BoothListAPIView,
     BoothActivityCreateAPIView,
@@ -17,6 +20,7 @@ from .admin_views import (
     AdminBoothDetailAPIView,
     AdminBoothContentAPIView,
     AdminBoothContentDetailAPIView,
+    AdminBoothContentViewersAPIView,
 )
 
 urlpatterns = [
@@ -101,13 +105,20 @@ urlpatterns = [
 
     path(
         "management/content/<int:content_id>/viewers/",
-        BoothContentViewersAPIView.as_view(),
+        AdminBoothContentViewersAPIView.as_view(),
+        name="admin-content-viewers",
     ),
 
     path(
         "reports/",
         reports_overview,
         name="reports-overview",
+    ),
+
+    path(
+        "reports/reset/",
+        reset_demo_data,
+        name="reset-demo-data",
     ),
 
 ]

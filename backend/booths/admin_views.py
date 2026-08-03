@@ -1,14 +1,17 @@
 from django.shortcuts import get_object_or_404
+from django.contrib.auth.models import User
 import os
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-
+from accounts.models import EmployeeProfile
 from .permissions import IsAdminUser
-from .models import Booth
+from .models import (
+    Booth,
+    BoothContent,
+    BoothActivity,
+)
 from .admin_serializers import AdminBoothSerializer
-
-from .models import BoothContent
 from .content_serializers import BoothContentSerializer
 
 class AdminBoothListCreateAPIView(APIView):
@@ -311,4 +314,122 @@ class AdminBoothContentDetailAPIView(APIView):
 
         return Response(
             status=status.HTTP_204_NO_CONTENT
-        )   
+        )
+
+class AdminBoothContentViewersAPIView(APIView):
+
+    permission_classes = [IsAdminUser]
+
+    def get(self, request, content_id):
+
+        content = get_object_or_404(
+            BoothContent,
+            id=content_id
+        )
+
+        department = content.target_audience
+
+        if department in ["PUBLIC", "EMPLOYEE"]:
+
+            employees = User.objects.select_related(
+                "employee_profile"
+            ).filter(
+                is_staff=False,
+                is_active=True
+            )
+
+        else:
+
+            employees = User.objects.select_related(
+                "employee_profile"
+            ).filter(
+                employee_profile__department=department,
+                is_staff=False,
+                is_active=True
+            )
+
+        viewed_activities = BoothActivity.objects.filter(
+            content=content,
+            action="VIEW"
+        ).order_by("-created_at")
+
+        viewed_lookup = {}
+
+        for activity in viewed_activities:
+
+            if activity.user_name not in viewed_lookup:
+
+                viewed_lookup[activity.user_name] = activity
+
+        employee_list = []
+
+        viewed_count = 0
+
+        for employee in employees:
+
+            activity = viewed_lookup.get(
+                employee.username
+            )
+
+            viewed = activity is not None
+
+            if viewed:
+                viewed_count += 1
+
+            employee_list.append({
+
+                "id": employee.id,
+
+                "nik": employee.employee_profile.nik,
+
+                "name": employee.first_name,
+
+                "username": employee.username,
+
+                "department": employee.employee_profile.department,
+
+                "position": employee.employee_profile.position,
+
+                "viewed": viewed,
+
+                "viewed_at": (
+                    activity.created_at
+                    if activity
+                    else None
+                ),
+
+            })
+
+        employee_list.sort(
+            key=lambda employee: (
+                not employee["viewed"],
+                employee["name"]
+            )
+
+        )
+
+        total = len(employee_list)
+
+        progress = 0
+
+        if total > 0:
+
+            progress = round(
+                viewed_count / total * 100
+            )
+
+        return Response({
+
+            "content_title": content.title,
+
+            "department": department,
+
+            "total_employee": total,
+
+            "viewed": viewed_count,
+
+            "progress": progress,
+
+            "employees": employee_list,
+
+        })

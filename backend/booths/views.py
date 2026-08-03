@@ -88,7 +88,11 @@ class BoothActivityCreateAPIView(APIView):
         data = request.data.copy()
 
         data["user_name"] = request.user.username
-        data["user_email"] = request.user.email
+        data["user_email"] = (
+            request.user.email
+            if request.user.email
+            else f"{request.user.username}@employee.local"
+        )
 
         booth = data.get("booth")
         content = data.get("content")
@@ -140,6 +144,8 @@ class BoothActivityCreateAPIView(APIView):
                 serializer.data,
                 status=status.HTTP_201_CREATED
             )
+
+        print(serializer.errors)
 
         return Response(
             serializer.errors,
