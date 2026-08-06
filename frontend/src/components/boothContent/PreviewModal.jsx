@@ -1,3 +1,18 @@
+import { useState, useRef, useEffect } from "react";
+
+import { Document, Page, pdfjs } from "react-pdf";
+
+import "react-pdf/dist/Page/AnnotationLayer.css";
+import "react-pdf/dist/Page/TextLayer.css";
+
+pdfjs.GlobalWorkerOptions.workerSrc = new URL(
+
+    "pdfjs-dist/build/pdf.worker.min.mjs",
+
+    import.meta.url
+
+).toString();
+
 function getFileExtension(file) {
 
     if (!file) {
@@ -95,6 +110,42 @@ function PreviewModal({
     setPreviewContent,
 
 }) {
+
+    const [numPages, setNumPages] = useState(0);
+    const containerRef = useRef(null);
+    const [pageWidth, setPageWidth] = useState(700);
+
+    useEffect(() => {
+
+        function updateWidth(){
+
+            if(containerRef.current){
+
+                setPageWidth(
+
+                    containerRef.current.offsetWidth - 30
+
+                );
+
+            }
+
+        }
+
+        updateWidth();
+
+        window.addEventListener(
+            "resize",
+            updateWidth
+        );
+
+        return ()=>
+
+            window.removeEventListener(
+                "resize",
+                updateWidth
+            );
+
+    },[]);
 
     if (!previewContent) {
 
@@ -214,45 +265,69 @@ function PreviewModal({
 
                                 {
 
-                                    isVideo(
-
-                                        previewContent.file
-
-                                    )
-
-                                    ? (
+                                    isVideo(previewContent.file) ? (
 
                                         <video
                                             controls
+                                            controlsList="nodownload"
+                                            disablePictureInPicture
                                             className="preview-video"
                                             src={`http://127.0.0.1:8000${previewContent.file}`}
-                                        >
-                                            Your browser does not support video.
-                                        </video>
-
-                                    )
-                                    
-                                    : isImage(
-
-                                        previewContent.file
-
-                                    )
-
-                                    ? (
-
-                                        <img
-
-                                            src={`http://127.0.0.1:8000${previewContent.file}`}
-
-                                            className="preview-image"
-
-                                            alt="Preview"
-
                                         />
 
-                                    )
+                                    ) : isImage(previewContent.file) ? (
 
-                                    : (
+                                        <img
+                                            src={`http://127.0.0.1:8000${previewContent.file}`}
+                                            className="preview-image"
+                                            alt="Preview"
+                                            draggable={false}
+                                        />
+
+                                    ) : isPdf(previewContent.file) ? (
+
+                                        <div
+                                            className="preview-pdf"
+                                            ref={containerRef}
+                                        >
+
+                                            <Document
+
+                                                file={`http://127.0.0.1:8000${previewContent.file}`}
+
+                                                onLoadSuccess={({ numPages }) =>
+
+                                                    setNumPages(numPages)
+
+                                                }
+
+                                            >
+
+                                                {
+
+                                                    Array.from(
+
+                                                        { length: numPages },
+
+                                                        (_, index) => (
+
+                                                            <Page
+                                                                key={index}
+                                                                pageNumber={index + 1}
+                                                                width={pageWidth}
+                                                            />
+
+                                                        )
+
+                                                    )
+
+                                                }
+
+                                            </Document>
+
+                                        </div>
+
+                                    ) : (
 
                                         <div className="preview-document">
 
@@ -264,37 +339,15 @@ function PreviewModal({
 
                                             <h3>
 
-                                                Unsupported File
+                                                Preview Not Available
 
                                             </h3>
 
                                             <p>
 
-                                                This file cannot be previewed.
+                                                This file type cannot be previewed yet.
 
                                             </p>
-
-                                            <button
-
-                                                className="primary-button"
-
-                                                onClick={()=>
-
-                                                    window.open(
-
-                                                        `http://127.0.0.1:8000${previewContent.file}`,
-
-                                                        "_blank"
-
-                                                    )
-
-                                                }
-
-                                            >
-
-                                                Open File
-
-                                            </button>
 
                                         </div>
 

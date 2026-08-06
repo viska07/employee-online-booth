@@ -305,6 +305,24 @@
     background: #fff;
     box-shadow: 0 20px 50px rgba(0,0,0,.3);
 }
+
+.preview-body{
+    max-height:80vh;
+    overflow-y:auto;
+    overflow-x:hidden;
+    padding:20px;
+}
+
+.preview-pdf{
+    width:100%;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+}
+
+.react-pdf__Page{
+    box-shadow:0 4px 16px rgba(0,0,0,.15);
+}
 /* ======================================================
    MICRO ANIMATION
 ====================================================== */

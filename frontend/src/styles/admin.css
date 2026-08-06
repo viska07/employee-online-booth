@@ -1481,7 +1481,7 @@ body {
 .preview-modal{
     width:70%;
     max-width:800px;
-    max-height:85vh;
+    max-height:95vh;
     overflow:hidden;
     border-radius:18px;
     padding:25px;

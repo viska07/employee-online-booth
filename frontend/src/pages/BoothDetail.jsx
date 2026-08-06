@@ -103,23 +103,7 @@ function BoothDetail() {
 
     }
 
-    const extension = content.file
-        ?.split(".")
-        .pop()
-        ?.toLowerCase();
-
-    if (
-        ["mp4", "mov", "avi", "webm", "png", "jpg", "jpeg", "gif", "webp"].includes(extension)
-    ) {
-        setPreviewContent(content);
-    } else if (content.source_type === "LINK") {
-        window.open(content.external_url, "_blank");
-    } else {
-        window.open(
-            `http://127.0.0.1:8000${content.file}`,
-            "_blank"
-        );
-    }
+    setPreviewContent(content);
 
   };
 

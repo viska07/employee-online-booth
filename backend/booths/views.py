@@ -18,6 +18,14 @@ from .content_serializers import BoothContentSerializer
 from .access import filter_booth_contents
 from django.db.models import Q
 
+def get_activity_email(user):
+
+    if user.email:
+
+        return user.email
+
+    return f"{user.username}@employee.local"
+
 def get_available_contents(request, booth_id):
 
     contents = BoothContent.objects.filter(
@@ -88,10 +96,8 @@ class BoothActivityCreateAPIView(APIView):
         data = request.data.copy()
 
         data["user_name"] = request.user.username
-        data["user_email"] = (
-            request.user.email
-            if request.user.email
-            else f"{request.user.username}@employee.local"
+        data["user_email"] = get_activity_email(
+            request.user
         )
 
         booth = data.get("booth")
@@ -107,7 +113,7 @@ class BoothActivityCreateAPIView(APIView):
             if content:
 
                 activity = BoothActivity.objects.filter(
-                    user_email=request.user.email,
+                    user_email=get_activity_email(request.user),
                     content_id=content,
                     action="VIEW"
                 ).first()
@@ -115,7 +121,7 @@ class BoothActivityCreateAPIView(APIView):
             else:
 
                 activity = BoothActivity.objects.filter(
-                    user_email=request.user.email,
+                    user_email=get_activity_email(request.user),
                     booth_id=booth,
                     content__isnull=True,
                     action="VIEW"
@@ -221,7 +227,7 @@ class MyActivityAPIView(APIView):
 
     def get(self, request):
         activities = BoothActivity.objects.filter(
-            user_email=request.user.email
+            user_email=get_activity_email(request.user)
         ).order_by("-created_at")
         serializer = BoothActivitySerializer(
             activities,
@@ -236,7 +242,7 @@ class ViewedBoothAPIView(APIView):
     def get(self, request):
         viewed_booths = (
             BoothActivity.objects.filter(
-                user_email=request.user.email,
+                user_email=get_activity_email(request.user),
                 action="VIEW"
             )
             .values_list(
@@ -256,7 +262,7 @@ class ViewedContentAPIView(APIView):
         viewed_contents = (
 
             BoothActivity.objects.filter(
-                user_email=request.user.email,
+                user_email=get_activity_email(request.user),
                 booth_id=booth_id,
                 action="VIEW",
                 content__isnull=False
@@ -290,7 +296,7 @@ class BoothProgressAPIView(APIView):
 
             viewed_contents = BoothActivity.objects.filter(
                 booth=booth,
-                user_email=request.user.email,
+                user_email=get_activity_email(request.user),
                 action="VIEW",
                 content__isnull=False
             ).values(
