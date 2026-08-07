@@ -77,6 +77,10 @@ class BoothActivity(models.Model):
         auto_now_add=True
     )
 
+    hidden_by_user = models.BooleanField(
+        default=False
+    )
+
     def __str__(self):
         return f"{self.user_name} - {self.action}"
     

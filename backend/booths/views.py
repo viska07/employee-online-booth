@@ -227,7 +227,8 @@ class MyActivityAPIView(APIView):
 
     def get(self, request):
         activities = BoothActivity.objects.filter(
-            user_email=get_activity_email(request.user)
+            user_email=get_activity_email(request.user),
+            hidden_by_user=False
         ).order_by("-created_at")
         serializer = BoothActivitySerializer(
             activities,
