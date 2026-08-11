@@ -55,6 +55,15 @@ body{
     z-index:999;
 }
 
+.navbar-company-logo {
+    width: 38px;
+    height: 38px;
+    object-fit: contain;
+    border-radius: 6px;
+    background: #ffffff;
+    display: block;
+}
+
 .logo{
     font-size:22px;
     font-weight:700;

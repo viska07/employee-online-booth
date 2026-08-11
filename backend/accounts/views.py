@@ -2,7 +2,10 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
-from .models import EmployeeProfile
+from .models import (
+    EmployeeProfile,
+    SystemSetting,
+)
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
 )
@@ -11,8 +14,8 @@ from .serializers import (
     UserSerializer,
     RegisterSerializer,
     CustomTokenObtainPairSerializer,
+    SystemSettingSerializer,
 )
-
 
 class LoginView(TokenObtainPairView):
 
@@ -89,3 +92,68 @@ class RegisterOptionsAPIView(APIView):
             ]
 
         })
+
+class SettingsAPIView(APIView):
+
+    permission_classes = [IsAuthenticated]
+
+    def get_setting(self):
+
+        setting, created = SystemSetting.objects.get_or_create(
+            pk=1
+        )
+
+        return setting
+
+    def get(self, request):
+
+        if not request.user.is_staff:
+
+            return Response(
+                {
+                    "detail": "You do not have permission to access settings."
+                },
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        setting = self.get_setting()
+
+        serializer = SystemSettingSerializer(
+            setting
+        )
+
+        return Response(
+            serializer.data
+        )
+
+    def put(self, request):
+
+        if not request.user.is_staff:
+
+            return Response(
+                {
+                    "detail": "You do not have permission to access settings."
+                },
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        setting = self.get_setting()
+
+        serializer = SystemSettingSerializer(
+            setting,
+            data=request.data,
+            partial=True
+        )
+
+        if serializer.is_valid():
+
+            serializer.save()
+
+            return Response(
+                serializer.data
+            )
+
+        return Response(
+            serializer.errors,
+            status=status.HTTP_400_BAD_REQUEST
+        )

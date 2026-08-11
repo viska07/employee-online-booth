@@ -65,3 +65,52 @@ class EmployeeProfile(models.Model):
             return self.user.first_name
 
         return self.user.username
+
+class SystemSetting(models.Model):
+
+    DEFAULT_AUDIENCE_CHOICES = (
+        ("EMPLOYEE", "All Employees"),
+        ("PUBLIC", "Public"),
+    )
+
+    company_name = models.CharField(
+        max_length=255,
+        default="Employee Online Booth"
+    )
+
+    company_description = models.TextField(
+        blank=True,
+        null=True
+    )
+
+    company_logo = models.ImageField(
+        upload_to="settings/",
+        blank=True,
+        null=True
+    )
+
+    default_audience = models.CharField(
+        max_length=20,
+        choices=DEFAULT_AUDIENCE_CHOICES,
+        default="EMPLOYEE"
+    )
+
+    booth_per_page = models.PositiveIntegerField(
+        default=10
+    )
+
+    announcement_per_page = models.PositiveIntegerField(
+        default=10
+    )
+
+    featured_limit = models.PositiveIntegerField(
+        default=5
+    )
+
+    updated_at = models.DateTimeField(
+        auto_now=True
+    )
+
+    def __str__(self):
+        
+        return self.company_name

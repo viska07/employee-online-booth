@@ -11,6 +11,7 @@ from .views import (
     RegisterView,
     ProfileView,
     RegisterOptionsAPIView,
+    SettingsAPIView,
 )
 
 urlpatterns = [
@@ -37,6 +38,12 @@ urlpatterns = [
         "register/options/",
         RegisterOptionsAPIView.as_view(),
         name="register-options",
+    ),
+
+    path(
+        "settings/",
+        SettingsAPIView.as_view(),
+        name="settings",
     ),
 
     path(

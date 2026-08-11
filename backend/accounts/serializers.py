@@ -3,7 +3,10 @@ from rest_framework import serializers
 from django.contrib.auth import authenticate
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-from .models import EmployeeProfile
+from .models import (
+    EmployeeProfile,
+    SystemSetting,
+)
 
 class UserSerializer(serializers.ModelSerializer):
 
@@ -420,3 +423,26 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
             )
 
         return super().validate(attrs)
+
+class SystemSettingSerializer(serializers.ModelSerializer):
+
+    class Meta:
+
+        model = SystemSetting
+
+        fields = [
+            "id",
+            "company_name",
+            "company_description",
+            "company_logo",
+            "default_audience",
+            "booth_per_page",
+            "announcement_per_page",
+            "featured_limit",
+            "updated_at",
+        ]
+
+        read_only_fields = [
+            "id",
+            "updated_at",
+        ]
