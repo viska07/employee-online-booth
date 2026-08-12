@@ -91,7 +91,7 @@ function Navbar() {
                 className="logo"
             >
 
-                {companyLogo ? (
+                {companyLogo && (
 
                     <img
                         src={companyLogo}
@@ -99,13 +99,11 @@ function Navbar() {
                         className="navbar-company-logo"
                     />
 
-                ) : (
-
-                    <span>
-                        {companyName}
-                    </span>
-
                 )}
+
+                <span>
+                    {companyName}
+                </span>
 
             </Link>
 

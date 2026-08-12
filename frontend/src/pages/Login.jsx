@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import api from "../services/api";
 import { useAuth } from "../context/AuthContext";
@@ -14,6 +14,7 @@ function Login() {
         guestLogin,
     } = useAuth();
 
+
     const [username, setUsername] = useState("");
 
     const [password, setPassword] = useState("");
@@ -22,6 +23,95 @@ function Login() {
 
     const [loading, setLoading] = useState(false);
 
+
+    // =========================================
+    // COMPANY INFORMATION
+    // =========================================
+
+    const [companyName, setCompanyName] = useState(
+        "FILTRONA DIGITAL EXHIBITION"
+    );
+
+    const [companyDescription, setCompanyDescription] = useState(
+        "Employee Learning & Information Portal"
+    );
+
+    const [companyLogo, setCompanyLogo] = useState(
+        "/logo-filtrona.png"
+    );
+
+
+    useEffect(() => {
+
+        const fetchCompanyInformation = async () => {
+
+            try {
+
+                const response = await api.get(
+                    "/accounts/settings/"
+                );
+
+                const data = response.data;
+
+
+                if (data.company_name) {
+
+                    setCompanyName(
+                        data.company_name
+                    );
+
+                }
+
+
+                if (data.company_description) {
+
+                    setCompanyDescription(
+                        data.company_description
+                    );
+
+                }
+
+
+                if (data.company_logo) {
+
+                    if (
+                        data.company_logo.startsWith("http")
+                    ) {
+
+                        setCompanyLogo(
+                            data.company_logo
+                        );
+
+                    } else {
+
+                        setCompanyLogo(
+                            `http://127.0.0.1:8000${data.company_logo}`
+                        );
+
+                    }
+
+                }
+
+            } catch (error) {
+
+                console.error(
+                    "Failed to load company information:",
+                    error
+                );
+
+            }
+
+        };
+
+        fetchCompanyInformation();
+
+    }, []);
+
+
+    // =========================================
+    // LOGIN
+    // =========================================
+
     const handleSubmit = async (e) => {
 
         e.preventDefault();
@@ -29,6 +119,7 @@ function Login() {
         setLoading(true);
 
         setError("");
+
 
         try {
 
@@ -40,20 +131,25 @@ function Login() {
                 }
             );
 
+
             const access = response.data.access;
+
 
             api.defaults.headers.common[
                 "Authorization"
             ] = `Bearer ${access}`;
 
+
             const profile = await api.get(
                 "/accounts/profile/"
             );
+
 
             login(
                 profile.data,
                 access
             );
+
 
             if (profile.data.is_staff) {
 
@@ -80,6 +176,11 @@ function Login() {
 
     };
 
+
+    // =========================================
+    // GUEST LOGIN
+    // =========================================
+
     const handleGuestLogin = () => {
 
         guestLogin();
@@ -88,11 +189,13 @@ function Login() {
 
     };
 
+
     return (
 
         <div className="login-page">
 
             <div className="login-container">
+
 
                 {/* ================= LEFT ================= */}
 
@@ -100,27 +203,33 @@ function Login() {
 
                     <div className="login-brand">
 
-                        <img
-                            src="/logo-filtrona.png"
-                            alt="Filtrona"
-                            className="login-logo"
-                        />
+                        {companyLogo && (
+
+                            <img
+                                src={companyLogo}
+                                alt=""
+                                className="login-logo"
+                            />
+
+                        )}
 
                         <h1>
 
-                            FILTRONA DIGITAL EXHIBITION
+                            {companyName}
 
                         </h1>
 
                         <p>
 
-                            Employee Learning & Information Portal
+                            {companyDescription}
 
                         </p>
 
                     </div>
 
+
                     <div className="company-information">
+
 
                         <div className="company-card">
 
@@ -150,6 +259,7 @@ function Login() {
                             </div>
 
                         </div>
+
 
                         <div className="company-card">
 
@@ -181,6 +291,7 @@ function Login() {
 
                         </div>
 
+
                         <div className="company-card">
 
                             <div className="company-icon">
@@ -208,15 +319,18 @@ function Login() {
 
                         </div>
 
+
                     </div>
 
                 </div>
+
 
                 {/* ================= RIGHT ================= */}
 
                 <div className="login-right">
 
                     <div className="login-card">
+
 
                         <div className="login-header">
 
@@ -234,7 +348,9 @@ function Login() {
 
                         </div>
 
+
                         <form onSubmit={handleSubmit}>
+
 
                             <div className="form-group">
 
@@ -243,6 +359,7 @@ function Login() {
                                     Username
 
                                 </label>
+
 
                                 <input
                                     type="text"
@@ -257,6 +374,7 @@ function Login() {
 
                             </div>
 
+
                             <div className="form-group">
 
                                 <label>
@@ -264,6 +382,7 @@ function Login() {
                                     Password
 
                                 </label>
+
 
                                 <input
                                     type="password"
@@ -278,19 +397,17 @@ function Login() {
 
                             </div>
 
-                            {
 
-                                error && (
+                            {error && (
 
-                                    <div className="login-error">
+                                <div className="login-error">
 
-                                        {error}
+                                    {error}
 
-                                    </div>
+                                </div>
 
-                                )
+                            )}
 
-                            }
 
                             <button
                                 className="login-button"
@@ -309,7 +426,9 @@ function Login() {
 
                             </button>
 
+
                         </form>
+
 
                         <div className="login-footer">
 
@@ -319,33 +438,46 @@ function Login() {
 
                             </span>
 
+
                             <Link to="/register">
 
                                 Create Account
 
                             </Link>
 
+
                             <div className="guest-divider">
-                                <span>or</span>
+
+                                <span>
+
+                                    or
+
+                                </span>
+
                             </div>
+
 
                             <button
                                 type="button"
                                 className="guest-button"
                                 onClick={handleGuestLogin}
                             >
+
                                 Continue as Guest
+
                             </button>
 
                         </div>
 
-                        </div>
 
                     </div>
 
                 </div>
 
+
             </div>
+
+        </div>
 
     );
 

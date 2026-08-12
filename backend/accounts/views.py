@@ -1,7 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from .models import (
     EmployeeProfile,
     SystemSetting,
@@ -95,7 +95,13 @@ class RegisterOptionsAPIView(APIView):
 
 class SettingsAPIView(APIView):
 
-    permission_classes = [IsAuthenticated]
+    def get_permissions(self):
+
+        if self.request.method == "GET":
+
+            return [AllowAny()]
+
+        return [IsAuthenticated()]
 
     def get_setting(self):
 
@@ -106,15 +112,6 @@ class SettingsAPIView(APIView):
         return setting
 
     def get(self, request):
-
-        if not request.user.is_staff:
-
-            return Response(
-                {
-                    "detail": "You do not have permission to access settings."
-                },
-                status=status.HTTP_403_FORBIDDEN
-            )
 
         setting = self.get_setting()
 
@@ -132,7 +129,8 @@ class SettingsAPIView(APIView):
 
             return Response(
                 {
-                    "detail": "You do not have permission to access settings."
+                    "detail":
+                    "You do not have permission to modify settings."
                 },
                 status=status.HTTP_403_FORBIDDEN
             )

@@ -32,21 +32,39 @@
     text-align:center;
 }
 
-.login-logo{
-    width:180px;
-    margin-bottom:30px;
+.login-logo {
+    width: 82px;
+    height: 82px;
+    object-fit: contain;
+    display: block;
+    margin: 0 auto 18px;
+    padding: 10px;
+    box-sizing: border-box;
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow:
+        0 3px 10px rgba(0, 0, 0, 0.12);
 }
 
-.login-brand h1{
-    font-size:42px;
-    line-height:1.2;
-    margin-bottom:18px;
-    letter-spacing:.5px;
+.login-brand {
+    text-align: center;
+    margin-bottom: 30px;
 }
 
-.login-brand p{
-    font-size:18px;
-    opacity:.9;
+.login-brand h1 {
+    margin: 0;
+    font-size: 30px;
+    font-weight: 700;
+    line-height: 1.2;
+    color: #ffffff;
+}
+
+.login-brand p {
+    margin: 12px auto 0;
+    max-width: 520px;
+    font-size: 15px;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.9);
 }
 
 .company-information{
