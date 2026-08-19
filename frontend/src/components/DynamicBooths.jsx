@@ -8,6 +8,7 @@ function DynamicBooths() {
   const [booths, setBooths] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
+  const [showFeaturedBooth, setShowFeaturedBooth] = useState(true);
 
   const navigate = useNavigate();
   const { language } = useLanguage();
@@ -23,27 +24,53 @@ function DynamicBooths() {
         .includes(searchTerm.toLowerCase())
   );
 
+  const featuredBooths = filteredBooths.filter(
+      (booth) => booth.is_featured
+  );
+
   useEffect(() => {
 
-    api
-      .get("/booths/")
-      .then((response) => {
+    const fetchData = async () => {
 
-        setBooths(response.data);
+        try {
 
-      })
-      .catch((error) => {
+            const [
+                boothsResponse,
+                settingsResponse
+            ] = await Promise.all([
 
-        console.error("API Error:", error);
+                api.get("/booths/"),
 
-      })
-      .finally(() => {
+                api.get("/accounts/settings/"),
 
-        setLoading(false);
+            ]);
 
-      });
+            setBooths(
+                boothsResponse.data
+            );
 
-  }, []);
+            setShowFeaturedBooth(
+                settingsResponse.data.show_featured_booth
+            );
+
+        } catch (error) {
+
+            console.error(
+                "Failed to load booth data:",
+                error
+            );
+
+        } finally {
+
+            setLoading(false);
+
+        }
+
+    };
+
+    fetchData();
+
+}, []);
 
   const handleEnterBooth = (boothId) => {
 

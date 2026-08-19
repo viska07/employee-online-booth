@@ -439,6 +439,7 @@ class SystemSettingSerializer(serializers.ModelSerializer):
             "booth_per_page",
             "announcement_per_page",
             "featured_limit",
+            "show_featured_booth",
             "updated_at",
         ]
 

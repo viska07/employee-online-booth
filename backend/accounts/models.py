@@ -107,6 +107,10 @@ class SystemSetting(models.Model):
         default=5
     )
 
+    show_featured_booth = models.BooleanField(
+        default=True
+    )
+
     updated_at = models.DateTimeField(
         auto_now=True
     )

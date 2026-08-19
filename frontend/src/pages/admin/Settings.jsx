@@ -16,6 +16,8 @@ function Settings() {
 
     const [logoPreview, setLogoPreview] = useState(null);
 
+    const [showFeaturedBooth, setShowFeaturedBooth] = useState(true);
+
     const [loading, setLoading] = useState(true);
 
     const [saving, setSaving] = useState(false);
@@ -43,6 +45,10 @@ function Settings() {
             );
 
             setSettings(response.data);
+
+            setShowFeaturedBooth(
+                response.data.show_featured_booth
+            );
 
             if (response.data.company_logo) {
 
@@ -169,6 +175,11 @@ function Settings() {
             formData.append(
                 "featured_limit",
                 settings.featured_limit
+            );
+
+            formData.append(
+                "show_featured_booth",
+                showFeaturedBooth
             );
 
             if (
@@ -390,6 +401,23 @@ function Settings() {
                             Booth Settings
                         </h2>
 
+                        <div className="settings-switch">
+
+                            <label>
+                                Show Featured Booth
+                            </label>
+
+                            <input
+                                type="checkbox"
+                                checked={showFeaturedBooth}
+                                onChange={(event) =>
+                                    setShowFeaturedBooth(
+                                        event.target.checked
+                                    )
+                                }
+                            />
+
+                        </div>
 
                         <div className="settings-switch">
 
