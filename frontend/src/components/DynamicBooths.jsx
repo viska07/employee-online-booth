@@ -1,6 +1,7 @@
-import { useLanguage } from "../language/LanguageContext";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+
+import { useLanguage } from "../language/LanguageContext";
 import api from "../services/api";
 
 function DynamicBooths() {
@@ -8,69 +9,64 @@ function DynamicBooths() {
   const [booths, setBooths] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
-  const [showFeaturedBooth, setShowFeaturedBooth] = useState(true);
 
   const navigate = useNavigate();
   const { language } = useLanguage();
 
-  const filteredBooths = booths.filter(
-    (booth) =>
-      booth.title
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase()) ||
-
-      booth.description
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase())
-  );
-
-  const featuredBooths = filteredBooths.filter(
-      (booth) => booth.is_featured
-  );
-
   useEffect(() => {
 
-    const fetchData = async () => {
+    const fetchBooths = async () => {
 
-        try {
+      try {
 
-            const [
-                boothsResponse,
-                settingsResponse
-            ] = await Promise.all([
+        const response = await api.get("/booths/");
 
-                api.get("/booths/"),
+        setBooths(response.data);
 
-                api.get("/accounts/settings/"),
+      } catch (error) {
 
-            ]);
+        console.error(
+          "Failed to load booths:",
+          error
+        );
 
-            setBooths(
-                boothsResponse.data
-            );
+      } finally {
 
-            setShowFeaturedBooth(
-                settingsResponse.data.show_featured_booth
-            );
+        setLoading(false);
 
-        } catch (error) {
-
-            console.error(
-                "Failed to load booth data:",
-                error
-            );
-
-        } finally {
-
-            setLoading(false);
-
-        }
+      }
 
     };
 
-    fetchData();
+    fetchBooths();
 
-}, []);
+  }, []);
+
+  const filteredBooths = booths.filter(
+    (booth) => {
+
+      const keyword =
+        searchTerm.toLowerCase().trim();
+
+      if (!keyword) {
+        return true;
+      }
+
+      return (
+        booth.title
+          ?.toLowerCase()
+          .includes(keyword) ||
+
+        booth.description
+          ?.toLowerCase()
+          .includes(keyword)
+      );
+
+    }
+  );
+
+  const displayedBooths =
+    filteredBooths.slice(0, 6);
 
   const handleEnterBooth = (boothId) => {
 
@@ -78,149 +74,290 @@ function DynamicBooths() {
 
   };
 
+  const formatDate = (date) => {
+
+    if (!date) {
+      return null;
+    }
+
+    try {
+
+      return new Date(date).toLocaleDateString(
+        "id-ID",
+        {
+          day: "2-digit",
+          month: "short",
+          year: "numeric",
+        }
+      );
+
+    } catch {
+
+      return null;
+
+    }
+
+  };
+
   return (
 
     <section className="featured-booths">
 
-      <div className="section-title">
+      {/* ================= HEADER ================= */}
 
-        <span className="section-badge">
+      <div className="featured-booths-header">
 
-          {language.exhibition.badge}
+        <div className="featured-header-text">
 
-        </span>
+          <span className="section-badge">
+            {language.exhibition.badge}
+          </span>
 
-        <h2>
+          <h2>
+            {language.exhibition.title}
+          </h2>
 
-          {language.exhibition.title}
-
-        </h2>
-
-        <p>
-
-          {language.exhibition.description}
-
-        </p>
-
-        <div className="search-container">
-
-          <input
-            type="text"
-            className="search-input"
-            placeholder={language.exhibition.search}
-            value={searchTerm}
-            onChange={(e) =>
-              setSearchTerm(e.target.value)
-            }
-          />
+          <p>
+            {language.exhibition.description}
+          </p>
 
         </div>
 
       </div>
 
+      {/* ================= SEARCH ================= */}
+
+      <div className="featured-search">
+
+        <span className="featured-search-icon">
+          🔍
+        </span>
+
+        <input
+          type="text"
+          placeholder={
+            language.exhibition.search
+          }
+          value={searchTerm}
+          onChange={(e) =>
+            setSearchTerm(e.target.value)
+          }
+        />
+
+        {searchTerm && (
+
+          <button
+            className="clear-search"
+            onClick={() =>
+              setSearchTerm("")
+            }
+            type="button"
+          >
+            ×
+          </button>
+
+        )}
+
+      </div>
+
+      {/* ================= CONTENT ================= */}
+
       {loading ? (
 
-        <p style={{ textAlign: "center" }}>
+        <div className="featured-loading">
 
-          {language.exhibition.loading}
+          <div className="loading-spinner"></div>
 
-        </p>
+          <p>
+            {language.exhibition.loading}
+          </p>
+
+        </div>
 
       ) : (
 
         <>
 
-          <div className="booth-grid">
+          {displayedBooths.length > 0 ? (
 
-            {filteredBooths.length > 0 ? (
+            <div className="featured-booth-grid">
 
-              filteredBooths
-                .slice(0, 6)
-                .map((booth) => (
+              {displayedBooths.map((booth) => (
 
-                  <div
-                    key={booth.id}
-                    className="dynamic-booth-card"
-                  >
+                <article
+                  key={booth.id}
+                  className="featured-booth-card"
+                >
 
-                    <div className="area-banner">
+                  {/* ================= IMAGE ================= */}
 
-                      {booth.thumbnail ? (
+                  <div className="featured-booth-image">
 
-                        <img
-                          src={`http://127.0.0.1:8000${booth.thumbnail}`}
-                          alt={booth.title}
-                          className="booth-thumbnail"
-                        />
+                    {booth.thumbnail ? (
 
-                      ) : (
+                      <img
+                        src={`http://127.0.0.1:8000${booth.thumbnail}`}
+                        alt={booth.title}
+                      />
 
-                        <div className="booth-placeholder">
+                    ) : (
 
-                          <span className="placeholder-icon">
+                      <div className="featured-placeholder">
 
-                            🏢
+                        <span>
+                          🏢
+                        </span>
+
+                      </div>
+
+                    )}
+
+                    {booth.is_featured && (
+
+                      <div className="featured-badge">
+
+                        ★ Featured
+
+                      </div>
+
+                    )}
+
+                  </div>
+
+                  {/* ================= CONTENT ================= */}
+
+                  <div className="featured-booth-content">
+
+                    <div className="booth-category">
+
+                      <span className="category-icon">
+                        ✦
+                      </span>
+
+                      Digital Exhibition
+
+                    </div>
+
+                    <h3>
+                      {booth.title}
+                    </h3>
+
+                    <p className="featured-description">
+
+                      {booth.description ||
+                        "Jelajahi informasi dan materi digital pada area pameran ini."}
+
+                    </p>
+
+                    {/* ================= META ================= */}
+
+                    <div className="booth-meta">
+
+                      <span className="meta-item">
+
+                        <span className="meta-icon">
+                          👁
+                        </span>
+
+                        {booth.view_count ?? 0} views
+
+                      </span>
+
+                      {formatDate(
+                        booth.published_at
+                      ) && (
+
+                        <>
+                          <span className="meta-divider">
+                            •
+                          </span>
+
+                          <span className="meta-item">
+
+                            <span className="meta-icon">
+                              📅
+                            </span>
+
+                            {formatDate(
+                              booth.published_at
+                            )}
 
                           </span>
 
-                        </div>
+                        </>
 
                       )}
 
                     </div>
 
-                    <div className="area-content">
+                    {/* ================= BUTTON ================= */}
 
-                      <h3>
+                    <button
+                      className="featured-enter-btn"
+                      onClick={() =>
+                        handleEnterBooth(
+                          booth.id
+                        )
+                      }
+                    >
 
-                        {booth.title}
-
-                      </h3>
-
-                      <p>
-
-                        {booth.description}
-
-                      </p>
-
-                      <button
-                        onClick={() =>
-                          handleEnterBooth(booth.id)
-                        }
-                      >
-
+                      <span>
                         {language.exhibition.explore}
+                      </span>
 
-                      </button>
+                      <span className="enter-arrow">
+                        →
+                      </span>
 
-                    </div>
+                    </button>
 
                   </div>
 
-                ))
+                </article>
 
-            ) : (
+              ))}
 
-              <p style={{ textAlign: "center" }}>
+            </div>
 
+          ) : (
+
+            <div className="featured-empty">
+
+              <div className="featured-empty-icon">
+                🔎
+              </div>
+
+              <h3>
                 {language.exhibition.noData}
+              </h3>
 
+              <p>
+                Tidak ditemukan area pameran
+                yang sesuai dengan pencarian.
               </p>
 
-            )}
+            </div>
 
-          </div>
+          )}
 
-          <div className="view-all-container">
+          {/* ================= VIEW ALL ================= */}
+
+          <div className="featured-bottom">
 
             <button
-              className="view-all-btn"
+              className="featured-view-all"
               onClick={() =>
                 navigate("/exhibitions")
               }
             >
 
-              {language.exhibition.viewAll}
+              <span>
+                {language.exhibition.viewAll}
+              </span>
+
+              <span className="view-all-arrow">
+                →
+              </span>
 
             </button>
 
