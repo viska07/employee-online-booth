@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+
 import api from "../services/api";
 import { useAuth } from "../context/AuthContext";
 
@@ -14,8 +15,7 @@ function Login() {
         guestLogin,
     } = useAuth();
 
-
-    const [username, setUsername] = useState("");
+    const [identifier, setIdentifier] = useState("");
 
     const [password, setPassword] = useState("");
 
@@ -32,9 +32,10 @@ function Login() {
         "FILTRONA DIGITAL EXHIBITION"
     );
 
-    const [companyDescription, setCompanyDescription] = useState(
-        "Employee Learning & Information Portal"
-    );
+    const [companyDescription, setCompanyDescription] =
+        useState(
+            "Employee Learning & Information Portal"
+        );
 
     const [companyLogo, setCompanyLogo] = useState(
         "/logo-filtrona.png"
@@ -75,7 +76,9 @@ function Login() {
                 if (data.company_logo) {
 
                     if (
-                        data.company_logo.startsWith("http")
+                        data.company_logo.startsWith(
+                            "http"
+                        )
                     ) {
 
                         setCompanyLogo(
@@ -103,6 +106,7 @@ function Login() {
 
         };
 
+
         fetchCompanyInformation();
 
     }, []);
@@ -126,8 +130,8 @@ function Login() {
             const response = await api.post(
                 "/accounts/login/",
                 {
-                    username,
-                    password,
+                    username: identifier,
+                    password: password,
                 }
             );
 
@@ -165,7 +169,7 @@ function Login() {
 
             setError(
                 error.response?.data?.detail ||
-                "Terjadi kesalahan saat login."
+                "NIK/No. HP atau password salah."
             );
 
         } finally {
@@ -214,15 +218,11 @@ function Login() {
                         )}
 
                         <h1>
-
                             {companyName}
-
                         </h1>
 
                         <p>
-
                             {companyDescription}
-
                         </p>
 
                     </div>
@@ -234,26 +234,20 @@ function Login() {
                         <div className="company-card">
 
                             <div className="company-icon">
-
                                 🏢
-
                             </div>
 
                             <div>
 
                                 <h3>
-
                                     Corporate Information
-
                                 </h3>
 
                                 <p>
-
                                     Access exhibition booths,
                                     company news,
                                     learning materials,
                                     and important announcements.
-
                                 </p>
 
                             </div>
@@ -264,27 +258,21 @@ function Login() {
                         <div className="company-card">
 
                             <div className="company-icon">
-
                                 📚
-
                             </div>
 
                             <div>
 
                                 <h3>
-
                                     Digital Learning
-
                                 </h3>
 
                                 <p>
-
                                     Learn anywhere through
                                     presentations,
                                     videos,
                                     documents,
                                     and articles.
-
                                 </p>
 
                             </div>
@@ -295,24 +283,18 @@ function Login() {
                         <div className="company-card">
 
                             <div className="company-icon">
-
                                 📢
-
                             </div>
 
                             <div>
 
                                 <h3>
-
                                     Stay Updated
-
                                 </h3>
 
                                 <p>
-
                                     Receive the latest company
                                     announcements and exhibition updates.
-
                                 </p>
 
                             </div>
@@ -335,15 +317,11 @@ function Login() {
                         <div className="login-header">
 
                             <h2>
-
                                 Welcome Back
-
                             </h2>
 
                             <p>
-
                                 Please sign in using your employee account.
-
                             </p>
 
                         </div>
@@ -352,37 +330,36 @@ function Login() {
                         <form onSubmit={handleSubmit}>
 
 
+                            {/* ================= IDENTIFIER ================= */}
+
                             <div className="form-group">
 
                                 <label>
-
-                                    Username
-
+                                    NIK / No. HP
                                 </label>
-
 
                                 <input
                                     type="text"
-                                    placeholder="Enter username"
-                                    value={username}
+                                    placeholder="Enter NIK or No. HP"
+                                    value={identifier}
                                     onChange={(e) =>
-                                        setUsername(
+                                        setIdentifier(
                                             e.target.value
                                         )
                                     }
+                                    required
                                 />
 
                             </div>
 
 
+                            {/* ================= PASSWORD ================= */}
+
                             <div className="form-group">
 
                                 <label>
-
                                     Password
-
                                 </label>
-
 
                                 <input
                                     type="password"
@@ -393,35 +370,35 @@ function Login() {
                                             e.target.value
                                         )
                                     }
+                                    required
                                 />
 
                             </div>
 
 
+                            {/* ================= ERROR ================= */}
+
                             {error && (
 
                                 <div className="login-error">
-
                                     {error}
-
                                 </div>
 
                             )}
 
 
+                            {/* ================= LOGIN BUTTON ================= */}
+
                             <button
+                                type="submit"
                                 className="login-button"
                                 disabled={loading}
                             >
 
                                 {
-
                                     loading
-
                                         ? "Signing In..."
-
                                         : "Sign In"
-
                                 }
 
                             </button>
@@ -433,25 +410,18 @@ function Login() {
                         <div className="login-footer">
 
                             <span>
-
                                 Don't have an account?
-
                             </span>
 
-
                             <Link to="/register">
-
                                 Create Account
-
                             </Link>
 
 
                             <div className="guest-divider">
 
                                 <span>
-
                                     or
-
                                 </span>
 
                             </div>
@@ -462,9 +432,7 @@ function Login() {
                                 className="guest-button"
                                 onClick={handleGuestLogin}
                             >
-
                                 Continue as Guest
-
                             </button>
 
                         </div>

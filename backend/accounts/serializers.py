@@ -1,12 +1,13 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from django.contrib.auth import authenticate
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+
 from .models import (
     EmployeeProfile,
     SystemSetting,
 )
+
 
 class UserSerializer(serializers.ModelSerializer):
 
@@ -17,6 +18,11 @@ class UserSerializer(serializers.ModelSerializer):
 
     nik = serializers.CharField(
         source="employee_profile.nik",
+        read_only=True
+    )
+
+    phone = serializers.CharField(
+        source="employee_profile.phone",
         read_only=True
     )
 
@@ -31,14 +37,13 @@ class UserSerializer(serializers.ModelSerializer):
     )
 
     class Meta:
-
         model = User
 
         fields = [
             "id",
-            "username",
             "email",
             "nik",
+            "phone",
             "full_name",
             "department",
             "position",
@@ -53,8 +58,8 @@ class RegisterSerializer(serializers.Serializer):
         max_length=150
     )
 
-    username = serializers.CharField(
-        max_length=150
+    phone = serializers.CharField(
+        max_length=20
     )
 
     email = serializers.EmailField(
@@ -63,7 +68,8 @@ class RegisterSerializer(serializers.Serializer):
     )
 
     nik = serializers.CharField(
-        max_length=20
+        min_length=6,
+        max_length=6
     )
 
     department = serializers.ChoiceField(
@@ -83,6 +89,43 @@ class RegisterSerializer(serializers.Serializer):
         write_only=True
     )
 
+    def validate_phone(self, value):
+
+        if not value.isdigit():
+            raise serializers.ValidationError(
+                "Nomor HP hanya boleh berisi angka."
+            )
+
+        if EmployeeProfile.objects.filter(
+            phone=value
+        ).exists():
+            raise serializers.ValidationError(
+                "Nomor HP sudah digunakan."
+            )
+
+        return value
+
+    def validate_nik(self, value):
+
+        if not value.isdigit():
+            raise serializers.ValidationError(
+                "NIK hanya boleh berisi angka."
+            )
+
+        if len(value) != 6:
+            raise serializers.ValidationError(
+                "NIK harus terdiri dari tepat 6 digit."
+            )
+
+        if EmployeeProfile.objects.filter(
+            nik=value
+        ).exists():
+            raise serializers.ValidationError(
+                "NIK sudah digunakan."
+            )
+
+        return value
+
     def validate(self, attrs):
 
         if attrs["password"] != attrs["confirm_password"]:
@@ -91,17 +134,11 @@ class RegisterSerializer(serializers.Serializer):
                 "Password dan Confirm Password tidak sama."
             })
 
-        if User.objects.filter(
-            username=attrs["username"]
-        ).exists():
-            raise serializers.ValidationError({
-                "username":
-                "Username sudah digunakan."
-            })
-
         email = attrs.get("email")
 
-        if email and User.objects.filter(email=email).exists():
+        if email and User.objects.filter(
+            email=email
+        ).exists():
             raise serializers.ValidationError({
                 "email":
                 "Email sudah digunakan."
@@ -111,37 +148,65 @@ class RegisterSerializer(serializers.Serializer):
 
     def create(self, validated_data):
 
-        password = validated_data.pop("password")
+        password = validated_data.pop(
+            "password"
+        )
 
-        validated_data.pop("confirm_password")
+        validated_data.pop(
+            "confirm_password"
+        )
 
-        department = validated_data.pop("department")
+        department = validated_data.pop(
+            "department"
+        )
 
-        position = validated_data.pop("position")
+        position = validated_data.pop(
+            "position"
+        )
 
-        full_name = validated_data.pop("full_name")
+        full_name = validated_data.pop(
+            "full_name"
+        )
 
-        nik = validated_data.pop("nik")
+        nik = validated_data.pop(
+            "nik"
+        )
+
+        phone = validated_data.pop(
+            "phone"
+        )
+
+        email = validated_data.get(
+            "email"
+        )
+
+        if not email:
+            email = f"{phone}@employee.local"
+
+        # Username hanya untuk kebutuhan internal
+        # Django. Tidak digunakan sebagai identitas
+        # aplikasi dan tidak dikirim ke frontend.
+        internal_username = f"employee_{phone}"
 
         user = User.objects.create_user(
-
-            username=validated_data["username"],
-            email=validated_data.get("email", ""),
+            username=internal_username,
+            email=email,
             password=password,
         )
 
         user.first_name = full_name
-
         user.save()
 
         EmployeeProfile.objects.create(
             user=user,
             nik=nik,
+            phone=phone,
             department=department,
             position=position,
         )
 
         return user
+
 
 class EmployeeSerializer(serializers.ModelSerializer):
 
@@ -152,6 +217,11 @@ class EmployeeSerializer(serializers.ModelSerializer):
 
     nik = serializers.CharField(
         source="employee_profile.nik",
+        read_only=True
+    )
+
+    phone = serializers.CharField(
+        source="employee_profile.phone",
         read_only=True
     )
 
@@ -166,27 +236,23 @@ class EmployeeSerializer(serializers.ModelSerializer):
     )
 
     class Meta:
-
         model = User
 
         fields = [
             "id",
             "full_name",
-            "username",
             "nik",
+            "phone",
             "department",
             "position",
             "is_active",
             "is_staff",
         ]
 
+
 class EmployeeCreateSerializer(serializers.Serializer):
 
     full_name = serializers.CharField(
-        max_length=150
-    )
-
-    username = serializers.CharField(
         max_length=150
     )
 
@@ -196,6 +262,11 @@ class EmployeeCreateSerializer(serializers.Serializer):
     )
 
     nik = serializers.CharField(
+        min_length=6,
+        max_length=6
+    )
+
+    phone = serializers.CharField(
         max_length=20
     )
 
@@ -223,21 +294,25 @@ class EmployeeCreateSerializer(serializers.Serializer):
     def validate(self, attrs):
 
         if attrs["password"] != attrs["confirm_password"]:
-
             raise serializers.ValidationError({
-
                 "confirm_password":
                 "Password dan Confirm Password tidak sama."
-
             })
 
         return attrs
 
-    def validate_username(self, value):
+    def validate_phone(self, value):
 
-        if User.objects.filter(username=value).exists():
+        if not value.isdigit():
             raise serializers.ValidationError(
-                "Username sudah digunakan"
+                "Nomor HP hanya boleh berisi angka."
+            )
+
+        if EmployeeProfile.objects.filter(
+            phone=value
+        ).exists():
+            raise serializers.ValidationError(
+                "Nomor HP sudah digunakan."
             )
 
         return value
@@ -247,51 +322,104 @@ class EmployeeCreateSerializer(serializers.Serializer):
         if value == "":
             return value
 
-        if User.objects.filter(email=value).exists():
+        if User.objects.filter(
+            email=value
+        ).exists():
             raise serializers.ValidationError(
-                "Email sudah digunakan"
+                "Email sudah digunakan."
             )
 
         return value
 
     def validate_nik(self, value):
 
-        if EmployeeProfile.objects.filter(nik=value).exists():
+        if not value.isdigit():
             raise serializers.ValidationError(
-                "NIK sudah digunakan"
+                "NIK hanya boleh berisi angka."
             )
+
+        if len(value) != 6:
+            raise serializers.ValidationError(
+                "NIK harus terdiri dari tepat 6 digit."
+            )
+
+        if EmployeeProfile.objects.filter(
+            nik=value
+        ).exists():
+            raise serializers.ValidationError(
+                "NIK sudah digunakan."
+            )
+
         return value
 
     def create(self, validated_data):
-        validated_data.pop("confirm_password")
-        department = validated_data.pop("department")
-        position = validated_data.pop("position")
-        full_name = validated_data.pop("full_name")
-        nik = validated_data.pop("nik")
-        user = User.objects.create_user(
-            username=validated_data["username"],
-            email=validated_data.get("email", ""),
-            password=validated_data["password"],
+
+        validated_data.pop(
+            "confirm_password"
         )
+
+        department = validated_data.pop(
+            "department"
+        )
+
+        position = validated_data.pop(
+            "position"
+        )
+
+        full_name = validated_data.pop(
+            "full_name"
+        )
+
+        nik = validated_data.pop(
+            "nik"
+        )
+
+        phone = validated_data.pop(
+            "phone"
+        )
+
+        password = validated_data.pop(
+            "password"
+        )
+
+        is_staff = validated_data.pop(
+            "is_staff",
+            False
+        )
+
+        email = validated_data.get(
+            "email"
+        )
+
+        if not email:
+            email = f"{phone}@employee.local"
+
+        internal_username = f"employee_{phone}"
+
+        user = User.objects.create_user(
+            username=internal_username,
+            email=email,
+            password=password,
+        )
+
         user.first_name = full_name
-        user.is_staff = validated_data["is_staff"]
+        user.is_staff = is_staff
         user.save()
+
         EmployeeProfile.objects.create(
             user=user,
             nik=nik,
+            phone=phone,
             department=department,
             position=position,
         )
 
         return user
 
+
 class EmployeeUpdateSerializer(serializers.Serializer):
 
     full_name = serializers.CharField(
-        max_length=150
-    )
-
-    username = serializers.CharField(
         max_length=150
     )
 
@@ -301,6 +429,11 @@ class EmployeeUpdateSerializer(serializers.Serializer):
     )
 
     nik = serializers.CharField(
+        min_length=6,
+        max_length=6
+    )
+
+    phone = serializers.CharField(
         max_length=20
     )
 
@@ -314,34 +447,38 @@ class EmployeeUpdateSerializer(serializers.Serializer):
 
     def update(self, instance, validated_data):
 
-        instance.first_name = validated_data["full_name"]
-        instance.username = validated_data["username"]
-        instance.email = validated_data.get("email", instance.email)
+        instance.first_name = validated_data[
+            "full_name"
+        ]
+
+        instance.email = validated_data.get(
+            "email",
+            instance.email
+        )
+
         instance.save()
 
         profile = instance.employee_profile
-        profile.nik = validated_data["nik"]
-        profile.department = validated_data["department"]
-        profile.position = validated_data["position"]
+
+        profile.nik = validated_data[
+            "nik"
+        ]
+
+        profile.phone = validated_data[
+            "phone"
+        ]
+
+        profile.department = validated_data[
+            "department"
+        ]
+
+        profile.position = validated_data[
+            "position"
+        ]
+
         profile.save()
 
         return instance
-
-    def validate_username(self, value):
-
-        user = self.instance
-
-        if User.objects.exclude(
-            id=user.id
-        ).filter(
-            username=value
-        ).exists():
-
-            raise serializers.ValidationError(
-                "Username sudah digunakan"
-            )
-
-        return value
 
     def validate_email(self, value):
 
@@ -350,9 +487,28 @@ class EmployeeUpdateSerializer(serializers.Serializer):
 
         user = self.instance
 
-        if User.objects.exclude(id=user.id).filter(email=value).exists():
+        if User.objects.exclude(
+            id=user.id
+        ).filter(
+            email=value
+        ).exists():
             raise serializers.ValidationError(
-                "Email sudah digunakan"
+                "Email sudah digunakan."
+            )
+
+        return value
+
+    def validate_phone(self, value):
+
+        user = self.instance
+
+        if EmployeeProfile.objects.exclude(
+            user=user
+        ).filter(
+            phone=value
+        ).exists():
+            raise serializers.ValidationError(
+                "Nomor HP sudah digunakan."
             )
 
         return value
@@ -366,16 +522,18 @@ class EmployeeUpdateSerializer(serializers.Serializer):
         ).filter(
             nik=value
         ).exists():
-
             raise serializers.ValidationError(
-                "NIK sudah digunakan"
+                "NIK sudah digunakan."
             )
 
         return value
 
-class EmployeeResetPasswordSerializer(serializers.Serializer):
 
-    password =  serializers.CharField(
+class EmployeeResetPasswordSerializer(
+    serializers.Serializer
+):
+
+    password = serializers.CharField(
         write_only=True,
         min_length=8
     )
@@ -387,44 +545,123 @@ class EmployeeResetPasswordSerializer(serializers.Serializer):
     def validate(self, attrs):
 
         if attrs["password"] != attrs["confirm_password"]:
-
             raise serializers.ValidationError({
-
                 "confirm_password":
                 "Password dan confirm Password tidak sama"
-
             })
 
         return attrs
 
+
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
 
     def validate(self, attrs):
+        from django.contrib.auth import get_user_model
+        from rest_framework.exceptions import AuthenticationFailed
 
-        username = attrs.get("username")
+        User = get_user_model()
+
+        identifier = attrs.get("username")
         password = attrs.get("password")
 
+        if not identifier:
+            raise AuthenticationFailed(
+                "NIK, No. HP, atau username admin wajib diisi."
+            )
+
+        if not password:
+            raise AuthenticationFailed(
+                "Password wajib diisi."
+            )
+
+        user = None
+
+        # ==================================================
+        # 1. ADMIN
+        # ==================================================
+        # Admin tetap menggunakan username internal Django.
+        # Username ini hanya untuk autentikasi admin,
+        # bukan data employee.
         try:
-            user = User.objects.get(username=username)
+            admin_user = User.objects.get(
+                username=identifier
+            )
+
+            if admin_user.is_staff or admin_user.is_superuser:
+                user = admin_user
 
         except User.DoesNotExist:
+            pass
+
+        # ==================================================
+        # 2. EMPLOYEE - NIK
+        # ==================================================
+        if user is None:
+
+            try:
+                profile = EmployeeProfile.objects.select_related(
+                    "user"
+                ).get(
+                    nik=identifier
+                )
+
+                user = profile.user
+
+            except EmployeeProfile.DoesNotExist:
+                pass
+
+        # ==================================================
+        # 3. EMPLOYEE - NO. HP
+        # ==================================================
+        if user is None:
+
+            try:
+                profile = EmployeeProfile.objects.select_related(
+                    "user"
+                ).get(
+                    phone=identifier
+                )
+
+                user = profile.user
+
+            except EmployeeProfile.DoesNotExist:
+                pass
+
+        # ==================================================
+        # 4. IDENTIFIER TIDAK DITEMUKAN
+        # ==================================================
+        if user is None:
             raise AuthenticationFailed(
-                "Username atau password salah."
+                "NIK atau No. HP tidak ditemukan."
             )
 
+        # ==================================================
+        # 5. CEK PASSWORD
+        # ==================================================
         if not user.check_password(password):
             raise AuthenticationFailed(
-                "Username atau password salah."
+                "NIK/No. HP atau password salah."
             )
 
+        # ==================================================
+        # 6. CEK AKTIF
+        # ==================================================
         if not user.is_active:
             raise AuthenticationFailed(
-                "Akun Anda telah dinonaktifkan. Silakan hubungi Administrator."
+                "Akun tidak aktif."
             )
+
+        # ==================================================
+        # 7. BIARKAN SIMPLEJWT MEMBUAT TOKEN
+        # ==================================================
+        attrs["username"] = user.username
 
         return super().validate(attrs)
 
-class SystemSettingSerializer(serializers.ModelSerializer):
+
+class SystemSettingSerializer(
+    serializers.ModelSerializer
+):
 
     class Meta:
 

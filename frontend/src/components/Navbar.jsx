@@ -1,9 +1,11 @@
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+
 import { FaRegUserCircle, FaSignOutAlt } from "react-icons/fa";
 
 import { useLanguage } from "../language/LanguageContext";
 import { useAuth } from "../context/AuthContext";
+
 import api from "../services/api";
 
 function Navbar() {
@@ -30,6 +32,10 @@ function Navbar() {
 
     const [companyLogo, setCompanyLogo] = useState(null);
 
+
+    // =========================================
+    // COMPANY INFORMATION
+    // =========================================
 
     useEffect(() => {
 
@@ -73,6 +79,10 @@ function Navbar() {
     }, []);
 
 
+    // =========================================
+    // LOGOUT
+    // =========================================
+
     const handleLogout = () => {
 
         logout();
@@ -85,6 +95,11 @@ function Navbar() {
     return (
 
         <nav className="navbar">
+
+
+            {/* =========================================
+                COMPANY LOGO & NAME
+            ========================================= */}
 
             <Link
                 to="/"
@@ -108,7 +123,16 @@ function Navbar() {
             </Link>
 
 
+            {/* =========================================
+                RIGHT SIDE
+            ========================================= */}
+
             <div className="navbar-right">
+
+
+                {/* =========================================
+                    NAVIGATION LINKS
+                ========================================= */}
 
                 <div className="nav-links">
 
@@ -157,6 +181,10 @@ function Navbar() {
                 </div>
 
 
+                {/* =========================================
+                    LANGUAGE SWITCH
+                ========================================= */}
+
                 <div className="language-switch">
 
                     <span className="language-label">
@@ -203,6 +231,10 @@ function Navbar() {
                 </div>
 
 
+                {/* =========================================
+                    USER MENU
+                ========================================= */}
+
                 <div
                     className="user-menu"
                     onClick={() =>
@@ -220,12 +252,16 @@ function Navbar() {
 
                             {isGuest
                                 ? "Guest"
-                                : user?.username}
+                                : user?.full_name || "User"}
 
                         </span>
 
                     </div>
 
+
+                    {/* =========================================
+                        USER DROPDOWN
+                    ========================================= */}
 
                     {showMenu && (
 
@@ -242,7 +278,7 @@ function Navbar() {
 
                                     {isGuest
                                         ? "Guest User"
-                                        : user?.username}
+                                        : user?.full_name || "User"}
 
                                 </strong>
 
@@ -251,12 +287,18 @@ function Navbar() {
 
                                     {isGuest
                                         ? "Public Access"
-                                        : user?.email}
+                                        : user?.nik
+                                            ? `NIK: ${user.nik}`
+                                            : "Employee"}
 
                                 </small>
 
                             </div>
 
+
+                            {/* =========================================
+                                MY ACTIVITY
+                            ========================================= */}
 
                             {!isGuest && (
 
@@ -266,6 +308,7 @@ function Navbar() {
                                 >
 
                                     📊{" "}
+
                                     {
                                         language.navbar.myActivity
                                     }
@@ -274,6 +317,10 @@ function Navbar() {
 
                             )}
 
+
+                            {/* =========================================
+                                LOGOUT
+                            ========================================= */}
 
                             <button
                                 className="logout-item"

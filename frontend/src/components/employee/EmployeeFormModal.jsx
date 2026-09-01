@@ -10,9 +10,9 @@ function EmployeeFormModal({
 
     const initialForm = {
         full_name: "",
-        username: "",
         email: "",
         nik: "",
+        phone: "",
         department: "",
         position: "",
         password: "",
@@ -53,14 +53,14 @@ function EmployeeFormModal({
         if (employee) {
 
             setForm({
-
                 full_name: employee.full_name || "",
-                username: employee.username || "",
                 email: employee.email || "",
                 nik: employee.nik || "",
+                phone: employee.phone || "",
                 department: employee.department || "",
                 position: employee.position || "",
-
+                password: "",
+                confirm_password: "",
             });
 
         } else {
@@ -75,12 +75,11 @@ function EmployeeFormModal({
 
     const handleChange = (e) => {
 
+        const { name, value } = e.target;
+
         setForm({
-
             ...form,
-
-            [e.target.name]: e.target.value,
-
+            [name]: value,
         });
 
     };
@@ -119,33 +118,32 @@ function EmployeeFormModal({
 
                 <div className="employee-modal-header">
 
-                    <h2>{title}</h2>
+                    <h2>
+                        {title}
+                    </h2>
 
                     <button
-
+                        type="button"
                         className="modal-close-button"
-
                         onClick={onClose}
-
                     >
-
                         ×
-
                     </button>
 
                 </div>
 
                 <form
-
                     className="employee-form"
-
                     onSubmit={handleSubmit}
-
                 >
+
+                    {/* Full Name */}
 
                     <div className="form-group">
 
-                        <label>Full Name</label>
+                        <label>
+                            Full Name
+                        </label>
 
                         <input
                             type="text"
@@ -157,39 +155,60 @@ function EmployeeFormModal({
 
                     </div>
 
+
+                    {/* Phone */}
+
                     <div className="form-group">
 
-                        <label>Username</label>
+                        <label>
+                            No. HP
+                        </label>
 
                         <input
-                            type="text"
-                            name="username"
-                            value={form.username}
+                            type="tel"
+                            name="phone"
+                            value={form.phone}
                             onChange={handleChange}
+                            placeholder="Contoh: 081122334455"
+                            inputMode="numeric"
                             required
                         />
 
                     </div>
 
+
+                    {/* NIK */}
+
                     <div className="form-group">
 
-                        <label>NIK</label>
+                        <label>
+                            NIK
+                        </label>
 
                         <input
                             type="text"
                             name="nik"
                             value={form.nik}
                             onChange={handleChange}
+                            maxLength={6}
+                            inputMode="numeric"
+                            pattern="[0-9]{1,6}"
+                            placeholder="Maksimal 6 angka"
                             required
                         />
 
                     </div>
 
+
+                    {/* Department + Position */}
+
                     <div className="form-row">
 
                         <div className="form-group">
 
-                            <label>Department</label>
+                            <label>
+                                Department
+                            </label>
 
                             <select
                                 name="department"
@@ -202,28 +221,27 @@ function EmployeeFormModal({
                                     -- Select Department --
                                 </option>
 
-                                {
+                                {departments.map((department) => (
 
-                                    departments.map((department) => (
+                                    <option
+                                        key={department.value}
+                                        value={department.value}
+                                    >
+                                        {department.label}
+                                    </option>
 
-                                        <option
-                                            key={department.value}
-                                            value={department.value}
-                                        >
-                                            {department.label}
-                                        </option>
-
-                                    ))
-
-                                }
+                                ))}
 
                             </select>
 
                         </div>
 
+
                         <div className="form-group">
 
-                            <label>Position</label>
+                            <label>
+                                Position
+                            </label>
 
                             <select
                                 name="position"
@@ -236,20 +254,16 @@ function EmployeeFormModal({
                                     -- Select Position --
                                 </option>
 
-                                {
+                                {positions.map((position) => (
 
-                                    positions.map((position) => (
+                                    <option
+                                        key={position.value}
+                                        value={position.value}
+                                    >
+                                        {position.label}
+                                    </option>
 
-                                        <option
-                                            key={position.value}
-                                            value={position.value}
-                                        >
-                                            {position.label}
-                                        </option>
-
-                                    ))
-
-                                }
+                                ))}
 
                             </select>
 
@@ -257,11 +271,16 @@ function EmployeeFormModal({
 
                     </div>
 
+
+                    {/* Password */}
+
                     <div className="form-row">
 
                         <div className="form-group">
 
-                            <label>Password</label>
+                            <label>
+                                Password
+                            </label>
 
                             <input
                                 type="password"
@@ -273,9 +292,12 @@ function EmployeeFormModal({
 
                         </div>
 
+
                         <div className="form-group">
 
-                            <label>Confirm Password</label>
+                            <label>
+                                Confirm Password
+                            </label>
 
                             <input
                                 type="password"
@@ -289,32 +311,26 @@ function EmployeeFormModal({
 
                     </div>
 
+
+                    {/* Footer */}
+
                     <div className="employee-modal-footer">
 
                         <button
-
                             type="button"
-
                             className="secondary-button"
-
                             onClick={onClose}
-
                         >
-
                             Cancel
-
                         </button>
 
                         <button
-
                             type="submit"
-
                             className="primary-button"
-
                         >
-
-                            {employee ? "Save Changes" : "Create Employee"}
-
+                            {employee
+                                ? "Save Changes"
+                                : "Create Employee"}
                         </button>
 
                     </div>

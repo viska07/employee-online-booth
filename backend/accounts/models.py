@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User as DjangoUser
 
+
 class EmployeeProfile(models.Model):
 
     DEPARTMENT_CHOICES = (
@@ -35,6 +36,13 @@ class EmployeeProfile(models.Model):
     )
 
     nik = models.CharField(
+        max_length=6,
+        unique=True,
+        null=True,
+        blank=True
+    )
+
+    phone = models.CharField(
         max_length=20,
         unique=True,
         null=True,
@@ -60,11 +68,11 @@ class EmployeeProfile(models.Model):
     )
 
     def __str__(self):
-
         if self.user.first_name:
             return self.user.first_name
 
         return self.user.username
+
 
 class SystemSetting(models.Model):
 
@@ -116,5 +124,4 @@ class SystemSetting(models.Model):
     )
 
     def __str__(self):
-        
         return self.company_name

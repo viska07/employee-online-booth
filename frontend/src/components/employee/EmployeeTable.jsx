@@ -9,264 +9,175 @@ function EmployeeTable({
     onToggleStatus,
     onResetPassword,
 }) {
-
     const [search, setSearch] = useState("");
     const [selectedEmployee, setSelectedEmployee] = useState(null);
 
     const filteredEmployees = employees.filter((employee) => {
-
-        const keyword = search.toLowerCase();
+        const keyword = search.toLowerCase().trim();
 
         return (
-
             employee.full_name
                 ?.toLowerCase()
-                .includes(keyword)
+                .includes(keyword) ||
 
-            ||
-
-            employee.username
+            employee.phone
                 ?.toLowerCase()
-                .includes(keyword)
-
-            ||
+                .includes(keyword) ||
 
             employee.nik
                 ?.toLowerCase()
-                .includes(keyword)
-
-            ||
+                .includes(keyword) ||
 
             employee.department
                 ?.toLowerCase()
-                .includes(keyword)
-
-            ||
+                .includes(keyword) ||
 
             employee.position
                 ?.toLowerCase()
                 .includes(keyword)
-
         );
-
     });
 
     if (loading) {
-
         return (
-
             <div className="admin-loading">
-
                 Loading employees...
-
             </div>
-
         );
-
     }
 
     return (
-
         <>
-
             <div className="admin-toolbar">
-
                 <div className="toolbar-left">
-
                     <div className="admin-search">
-
                         <input
-
                             type="text"
-
                             placeholder="Search employee..."
-
                             value={search}
-
                             onChange={(e) =>
                                 setSearch(e.target.value)
                             }
-
                         />
-
                     </div>
-
                 </div>
-
             </div>
 
             <table className="admin-table">
-
                 <thead>
-
                     <tr>
-
                         <th>Name</th>
-                        <th>Username</th>
+                        <th>No. HP</th>
                         <th>NIK</th>
                         <th>Department</th>
                         <th>Position</th>
                         <th>Status</th>
                         <th>Action</th>
-
                     </tr>
-
                 </thead>
 
                 <tbody>
+                    {filteredEmployees.length === 0 ? (
+                        <tr>
+                            <td
+                                colSpan="7"
+                                style={{
+                                    textAlign: "center",
+                                    padding: "30px",
+                                }}
+                            >
+                                No employee found.
+                            </td>
+                        </tr>
+                    ) : (
+                        filteredEmployees.map((employee) => (
+                            <tr key={employee.id}>
 
-                    {
+                                {/* Name */}
+                                <td>
+                                    {employee.full_name || "-"}
+                                </td>
 
-                        filteredEmployees.length === 0 ?
+                                {/* No. HP */}
+                                <td>
+                                    {employee.phone || "-"}
+                                </td>
 
-                            (
+                                {/* NIK */}
+                                <td>
+                                    {employee.nik || "-"}
+                                </td>
 
-                                <tr>
+                                {/* Department */}
+                                <td>
+                                    {employee.department || "-"}
+                                </td>
 
-                                    <td
-                                        colSpan="7"
-                                        style={{
-                                            textAlign: "center",
-                                            padding: "30px"
-                                        }}
+                                {/* Position */}
+                                <td>
+                                    {employee.position || "-"}
+                                </td>
+
+                                {/* Status */}
+                                <td>
+                                    <span
+                                        className={`badge ${
+                                            employee.is_active
+                                                ? "success"
+                                                : "danger"
+                                        }`}
                                     >
+                                        {employee.is_active
+                                            ? "Active"
+                                            : "Inactive"}
+                                    </span>
+                                </td>
 
-                                        No employee found.
-
-                                    </td>
-
-                                </tr>
-
-                            )
-
-                            :
-
-                            filteredEmployees.map((employee) => (
-
-                                <tr key={employee.id}>
-
-                                    <td>
-
-                                        {employee.full_name || "-"}
-
-                                    </td>
-
-                                    <td>
-
-                                        {employee.username}
-
-                                    </td>
-
-                                    <td>
-
-                                        {employee.nik || "-"}
-
-                                    </td>
-
-                                    <td>
-
-                                        {employee.department || "-"}
-
-                                    </td>
-
-                                    <td>
-
-                                        {employee.position || "-"}
-
-                                    </td>
-
-                                    <td>
-
-                                        <span
-
-                                            className={`badge ${
-
-                                                employee.is_active
-
-                                                    ? "success"
-
-                                                    : "danger"
-
-                                            }`}
-
-                                        >
-
-                                            {
-
-                                                employee.is_active
-
-                                                    ? "Active"
-
-                                                    : "Inactive"
-
-                                            }
-
-                                        </span>
-
-                                    </td>
-
-                                    <td
-                                        style={{
-                                            position: "relative"
-                                        }}
-                                    >
-
-                                        <button
-
-                                            className="table-action-button"
-
-                                            onClick={() =>
-
-                                                setSelectedEmployee(
-
-                                                    selectedEmployee?.id === employee.id
-
-                                                        ? null
-
-                                                        : employee
-
-                                                )
-
-                                            }
-
-                                        >
-
-                                            <FaEllipsisV />
-
-                                        </button>
-
-                                        {
-
-                                            selectedEmployee?.id === employee.id && (
-
-                                                <EmployeeActionMenu
-                                                    employee={employee}
-                                                    onEdit={onEdit}
-                                                    onResetPassword={onResetPassword}
-                                                    onToggleStatus={onToggleStatus}
-                                                    onClose={() => setSelectedEmployee(null)}
-                                                />
-
+                                {/* Action */}
+                                <td
+                                    style={{
+                                        position: "relative",
+                                    }}
+                                >
+                                    <button
+                                        className="table-action-button"
+                                        onClick={() =>
+                                            setSelectedEmployee(
+                                                selectedEmployee?.id ===
+                                                    employee.id
+                                                    ? null
+                                                    : employee
                                             )
-
                                         }
+                                    >
+                                        <FaEllipsisV />
+                                    </button>
 
-                                    </td>
+                                    {selectedEmployee?.id ===
+                                        employee.id && (
+                                        <EmployeeActionMenu
+                                            employee={employee}
+                                            onEdit={onEdit}
+                                            onResetPassword={
+                                                onResetPassword
+                                            }
+                                            onToggleStatus={
+                                                onToggleStatus
+                                            }
+                                            onClose={() =>
+                                                setSelectedEmployee(null)
+                                            }
+                                        />
+                                    )}
+                                </td>
 
-                                </tr>
-
-                            ))
-
-                    }
-
+                            </tr>
+                        ))
+                    )}
                 </tbody>
-
             </table>
-
         </>
-
     );
-
 }
 
 export default EmployeeTable;
