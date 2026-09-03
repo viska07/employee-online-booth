@@ -81,15 +81,15 @@ class QuestionCreateView(APIView):
         # SUPERVISOR EMAILS
         # =========================================
 
-        #supervisor_emails = [
-        #    "EMAIL_BU_MARISSA",
-        #    "EMAIL_PAK_JAMAL",
-        #    "EMAIL_PAK_DWI",
-        #]
-
         supervisor_emails = [
-            "viskaramadhani20@gmail.com",
+            "EMAIL_BU_MARISSA",
+            "EMAIL_PAK_JAMAL",
+            "EMAIL_PAK_DWI",
         ]
+
+        #supervisor_emails = [
+        #    "viskaramadhani20@gmail.com",
+        #]
 
         send_mail(
             subject=email_subject,
