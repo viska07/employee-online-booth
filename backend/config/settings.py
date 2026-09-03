@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'booths',
     'announcements',
     'dashboard',
+    "questions",
 ]
 
 MIDDLEWARE = [
@@ -141,7 +142,9 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
 EMAIL_HOST_USER = 'ataliaramadhani036@gmail.com'
-EMAIL_HOST_PASSWORD = 'dprx lspl fawq kzrt'
+EMAIL_HOST_PASSWORD = 'ipqr acjz vvfn ldbr'
+
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 

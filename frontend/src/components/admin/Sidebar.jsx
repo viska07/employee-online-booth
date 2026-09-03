@@ -1,11 +1,10 @@
 import { NavLink, useNavigate } from "react-router-dom";
-
 import { useAuth } from "../../context/AuthContext";
-
 import {
     FaChartPie,
     FaDesktop,
     FaBullhorn,
+    FaQuestionCircle,
     FaUsers,
     FaChartBar,
     FaCog,
@@ -69,6 +68,16 @@ function Sidebar() {
 
                     <span>Announcements</span>
 
+                </NavLink>
+
+                <NavLink
+                    to="/management/questions"
+                >
+
+                    <FaQuestionCircle />
+
+                    <span>Questions</span>
+                    
                 </NavLink>
 
                 <NavLink

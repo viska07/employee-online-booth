@@ -1,0 +1,187 @@
+/* ==========================================================
+   QUESTIONS MANAGEMENT
+========================================================== */
+
+.questions-page {
+    width: 100%;
+}
+
+.questions-header {
+    margin-bottom: 28px;
+}
+
+.questions-header h1 {
+    margin: 0;
+    color: #1e293b;
+    font-size: 32px;
+    font-weight: 700;
+    letter-spacing: -0.6px;
+}
+
+.questions-header p {
+    margin: 7px 0 0;
+    color: #64748b;
+    font-size: 15px;
+    line-height: 1.6;
+}
+
+/* ==========================================================
+   QUESTIONS CARD
+========================================================== */
+
+.questions-card {
+    overflow: hidden;
+    border: 1px solid #e2e8f0;
+    border-radius: 18px;
+    background: #ffffff;
+    box-shadow:
+        0 8px 24px rgba(15, 23, 42, 0.06);
+}
+
+/* ==========================================================
+   QUESTIONS TABLE
+========================================================== */
+
+.questions-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.questions-table {
+    width: 100%;
+    min-width: 760px;
+    border-collapse: collapse;
+}
+
+.questions-table thead {
+    background: #f8fafc;
+}
+
+.questions-table th {
+    padding: 16px 20px;
+    border-bottom: 1px solid #e2e8f0;
+    color: #1e293b;
+    font-size: 13px;
+    font-weight: 700;
+    text-align: left;
+    white-space: nowrap;
+}
+
+.questions-table td {
+    padding: 18px 20px;
+    border-bottom: 1px solid #edf2f7;
+    color: #475569;
+    font-size: 14px;
+    vertical-align: top;
+}
+
+.questions-table tbody tr {
+    transition: background 0.2s ease;
+}
+
+.questions-table tbody tr:hover {
+    background: #f8fafc;
+}
+
+.questions-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* ==========================================================
+   DATE
+========================================================== */
+
+.questions-date {
+    color: #64748b;
+    font-size: 13px;
+    white-space: nowrap;
+}
+
+/* ==========================================================
+   SENDER
+========================================================== */
+
+.questions-sender {
+    min-width: 150px;
+}
+
+.questions-sender-name {
+    display: block;
+    margin-bottom: 4px;
+    color: #1e293b;
+    font-weight: 700;
+}
+
+.questions-sender-anonymous {
+    display: inline-flex;
+    align-items: center;
+    padding: 5px 10px;
+    border-radius: 999px;
+    background: #f1f5f9;
+    color: #64748b;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+/* ==========================================================
+   NIK
+========================================================== */
+
+.questions-nik {
+    color: #475569;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+/* ==========================================================
+   QUESTION TEXT
+========================================================== */
+
+.questions-question {
+    min-width: 300px;
+    max-width: 650px;
+    color: #334155;
+    line-height: 1.7;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+/* ==========================================================
+   EMPTY / LOADING / ERROR
+========================================================== */
+
+.questions-state {
+    padding: 70px 30px;
+    text-align: center;
+}
+
+.questions-state h2 {
+    margin: 0 0 8px;
+    color: #1e293b;
+    font-size: 20px;
+}
+
+.questions-state p {
+    margin: 0;
+    color: #64748b;
+    font-size: 14px;
+}
+
+/* ==========================================================
+   RESPONSIVE
+========================================================== */
+
+@media (max-width: 768px) {
+    .questions-header h1 {
+        font-size: 27px;
+    }
+
+    .questions-card {
+        border-radius: 14px;
+    }
+
+    .questions-table th,
+    .questions-table td {
+        padding: 14px 16px;
+    }
+}

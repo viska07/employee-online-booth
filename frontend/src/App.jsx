@@ -6,6 +6,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import MyActivity from "./pages/MyActivity";
 import Announcements from "./pages/Announcements";
+import AskQuestion from "./pages/AskQuestion";
 import AnnouncementDetail from "./pages/AnnouncementDetail";
 import Forbidden from "./pages/Forbidden";
 import ProtectedRoute from "./routes/ProtectedRoute";
@@ -18,6 +19,7 @@ import AnnouncementsAdmin from "./pages/admin/Announcements";
 import Employees from "./pages/admin/Employees";
 import Reports from "./pages/admin/Reports";
 import Settings from "./pages/admin/Settings";
+import Questions from "./pages/admin/Questions";
 import { ToastContainer } from "react-toastify";
 
 function App() {
@@ -88,6 +90,15 @@ function App() {
                 />
 
                 <Route
+                    path="/ask-question"
+                    element={
+                        <ProtectedRoute>
+                            <AskQuestion />
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
                     path="/announcement/:id"
                     element={
                         <ProtectedRoute>
@@ -136,6 +147,11 @@ function App() {
                     <Route
                         path="announcements"
                         element={<AnnouncementsAdmin />}
+                    />
+
+                    <Route
+                        path="questions"
+                        element={<Questions />}
                     />
 
                     <Route

@@ -145,11 +145,9 @@ function Navbar() {
                                 : ""
                         }
                     >
-
                         {language.navbar.home}
 
                     </NavLink>
-
 
                     <NavLink
                         to="/exhibitions"
@@ -159,7 +157,6 @@ function Navbar() {
                                 : ""
                         }
                     >
-
                         {language.navbar.exhibitions}
 
                     </NavLink>
@@ -173,9 +170,19 @@ function Navbar() {
                                 : ""
                         }
                     >
-
                         {language.navbar.announcements}
 
+                    </NavLink>
+
+                    <NavLink
+                        to="/ask-question"
+                        className={({ isActive }) =>
+                            isActive
+                                ? "active-nav"
+                                : ""
+                        }
+                    >
+                        Ask Question
                     </NavLink>
 
                 </div>
