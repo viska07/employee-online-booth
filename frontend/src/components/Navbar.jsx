@@ -1,7 +1,7 @@
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 
-import { FaRegUserCircle, FaSignOutAlt } from "react-icons/fa";
+import { FaRegUserCircle, FaUserEdit, FaSignOutAlt } from "react-icons/fa";
 
 import { useLanguage } from "../language/LanguageContext";
 import { useAuth } from "../context/AuthContext";
@@ -304,24 +304,33 @@ function Navbar() {
 
 
                             {/* =========================================
-                                MY ACTIVITY
+                                PROFILE
                             ========================================= */}
-
                             {!isGuest && (
+                                <>
+                                    <Link
+                                        to="/profile"
+                                        className="dropdown-link"
+                                        onClick={() => setShowMenu(false)}
+                                    >
+                                        <FaUserEdit />
+                                        Profile
+                                    </Link>
 
-                                <Link
-                                    to="/my-activity"
-                                    className="dropdown-link"
-                                >
-
-                                    📊{" "}
-
-                                    {
-                                        language.navbar.myActivity
-                                    }
-
-                                </Link>
-
+                                    {/* =========================================
+                                        MY ACTIVITY
+                                    ========================================= */}
+                                    <Link
+                                        to="/my-activity"
+                                        className="dropdown-link"
+                                        onClick={() => setShowMenu(false)}
+                                    >
+                                        📊{" "}
+                                        {
+                                            language.navbar.myActivity
+                                        }
+                                    </Link>
+                                </>
                             )}
 
 

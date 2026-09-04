@@ -1,7 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User as DjangoUser
 
-
 class EmployeeProfile(models.Model):
 
     DEPARTMENT_CHOICES = (
@@ -47,6 +46,10 @@ class EmployeeProfile(models.Model):
         unique=True,
         null=True,
         blank=True
+    )
+
+    must_change_password = models.BooleanField(
+        default=True
     )
 
     department = models.CharField(

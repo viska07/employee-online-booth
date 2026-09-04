@@ -5,6 +5,7 @@ import Exhibitions from "./pages/Exhibitions";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import MyActivity from "./pages/MyActivity";
+import Profile from "./pages/Profile";
 import Announcements from "./pages/Announcements";
 import AskQuestion from "./pages/AskQuestion";
 import AnnouncementDetail from "./pages/AnnouncementDetail";
@@ -112,6 +113,15 @@ function App() {
                     element={
                         <ProtectedRoute>
                             <MyActivity />
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/profile"
+                    element={
+                        <ProtectedRoute>
+                            <Profile />
                         </ProtectedRoute>
                     }
                 />

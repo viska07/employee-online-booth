@@ -10,6 +10,7 @@ from .views import (
     LoginView,
     RegisterView,
     ProfileView,
+    ChangePasswordView,
     RegisterOptionsAPIView,
     SettingsAPIView,
 )
@@ -32,6 +33,12 @@ urlpatterns = [
         "profile/",
         ProfileView.as_view(),
         name="profile",
+    ),
+
+    path(
+        "profile/password/",
+        ChangePasswordView.as_view(),
+        name="profile-change-password",
     ),
 
     path(

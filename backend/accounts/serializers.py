@@ -51,6 +51,98 @@ class UserSerializer(serializers.ModelSerializer):
             "is_superuser",
         ]
 
+class EmployeeProfileUpdateSerializer(serializers.Serializer):
+    full_name = serializers.CharField(
+        max_length=150
+    )
+
+    phone = serializers.CharField(
+        max_length=20
+    )
+
+    def validate_phone(self, value):
+        if not value.isdigit():
+            raise serializers.ValidationError(
+                "Nomor HP hanya boleh berisi angka."
+            )
+
+        user = self.instance
+
+        if EmployeeProfile.objects.exclude(
+            user=user
+        ).filter(
+            phone=value
+        ).exists():
+            raise serializers.ValidationError(
+                "Nomor HP sudah digunakan."
+            )
+
+        return value
+
+    def update(self, instance, validated_data):
+        instance.first_name = validated_data[
+            "full_name"
+        ]
+        instance.save()
+
+        profile = instance.employee_profile
+
+        profile.phone = validated_data[
+            "phone"
+        ]
+        profile.save()
+
+        return instance
+
+class EmployeeChangePasswordSerializer(serializers.Serializer):
+    old_password = serializers.CharField(
+        write_only=True
+    )
+
+    new_password = serializers.CharField(
+        write_only=True,
+        min_length=8
+    )
+
+    confirm_password = serializers.CharField(
+        write_only=True
+    )
+
+    def validate(self, attrs):
+        user = self.context["request"].user
+
+        if not user.check_password(
+            attrs["old_password"]
+        ):
+            raise serializers.ValidationError({
+                "old_password": "Password lama tidak sesuai."
+            })
+
+        if attrs["new_password"] != attrs["confirm_password"]:
+            raise serializers.ValidationError({
+                "confirm_password": "Konfirmasi password tidak sesuai."
+            })
+
+        if attrs["old_password"] == attrs["new_password"]:
+            raise serializers.ValidationError({
+                "new_password": "Password baru harus berbeda dari password lama."
+            })
+
+        return attrs
+
+    def save(self, **kwargs):
+        user = self.context["request"].user
+
+        user.set_password(
+            self.validated_data["new_password"]
+        )
+        user.save()
+
+        profile = user.employee_profile
+        profile.must_change_password = False
+        profile.save()
+
+        return user
 
 class RegisterSerializer(serializers.Serializer):
 

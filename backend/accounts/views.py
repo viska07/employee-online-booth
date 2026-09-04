@@ -12,9 +12,11 @@ from rest_framework_simplejwt.views import (
 
 from .serializers import (
     UserSerializer,
+    EmployeeProfileUpdateSerializer,
+    EmployeeChangePasswordSerializer,
     RegisterSerializer,
     CustomTokenObtainPairSerializer,
-    SystemSettingSerializer,
+    SystemSettingSerializer
 )
 
 class LoginView(TokenObtainPairView):
@@ -50,16 +52,56 @@ class RegisterView(APIView):
 
 
 class ProfileView(APIView):
-
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
+        serializer = UserSerializer(request.user)
+        return Response(serializer.data)
 
-        serializer = UserSerializer(
-            request.user
+    def put(self, request):
+        serializer = EmployeeProfileUpdateSerializer(
+            instance=request.user,
+            data=request.data
         )
 
-        return Response(serializer.data)
+        if serializer.is_valid():
+            serializer.save()
+
+            response_serializer = UserSerializer(request.user)
+
+            return Response(
+                response_serializer.data,
+                status=status.HTTP_200_OK
+            )
+
+        return Response(
+            serializer.errors,
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+class ChangePasswordView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def put(self, request):
+        serializer = EmployeeChangePasswordSerializer(
+            data=request.data,
+            context={"request": request}
+        )
+
+        if serializer.is_valid():
+            serializer.save()
+
+            return Response(
+                {
+                    "message": "Password berhasil diubah."
+                },
+                status=status.HTTP_200_OK
+            )
+
+        return Response(
+            serializer.errors,
+            status=status.HTTP_400_BAD_REQUEST
+        )
     
 class RegisterOptionsAPIView(APIView):
 
